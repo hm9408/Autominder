@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">Autominder</string>
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
+    <string name="title_section1">Hugo</string>
+    <string name="title_section2">es</string>
+    <string name="title_section3">putazo</string>
     <string name="action_settings">Settings</string>
 
 </resources>
