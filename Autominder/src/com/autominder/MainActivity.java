@@ -1,5 +1,7 @@
 package com.autominder;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
@@ -7,6 +9,7 @@ import android.app.ActionBar;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -70,7 +73,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			// this tab is selected.
 			actionBar.addTab(actionBar.newTab()
 					.setText(mSectionsPagerAdapter.getPageTitle(i))
-					.setTabListener(this));
+					.setTabListener(this)
+					);
 		}
 	}
 
@@ -118,8 +122,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
+		List<Fragment> fragments;
+
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
+			fragments = new ArrayList<Fragment>();
+			fragments.add( new FragmentoHome());
+			fragments.add( new FragmentoRecordatorios());
+			fragments.add( new FragmentoDistancia());
 		}
 
 		@Override
@@ -127,13 +137,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below).
-			return PlaceholderFragment.newInstance(position + 1);
+	
+			return fragments.get(position);
 		}
 
 		@Override
 		public int getCount() {
-			// Show 3 total pages.
-			return 3;
+			return fragments.size();
 		}
 
 		@Override
