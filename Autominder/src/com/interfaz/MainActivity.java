@@ -1,8 +1,14 @@
-package com.autominder;
+package com.interfaz;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import com.autominder.R;
+import com.autominder.R.id;
+import com.autominder.R.layout;
+import com.autominder.R.menu;
+import com.autominder.R.string;
 
 import android.app.ActionBar;
 import android.app.Activity;

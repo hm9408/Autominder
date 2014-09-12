@@ -1,4 +1,4 @@
-package com.autominder;
+package com.interfaz;
 
 import android.app.Activity;
 

@@ -1,11 +1,11 @@
-package com.autominder;
+package com.interfaz;
 
 import android.app.Dialog;
 import android.content.Context;
 
-public class DeleteConfirmDialog extends Dialog {
+public class MaintenanceInfoDialog extends Dialog {
 
-	protected DeleteConfirmDialog(Context context, boolean cancelable,
+	protected MaintenanceInfoDialog(Context context, boolean cancelable,
 			OnCancelListener cancelListener) {
 		super(context, cancelable, cancelListener);
 		// TODO Auto-generated constructor stub
