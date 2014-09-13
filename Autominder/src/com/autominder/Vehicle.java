@@ -86,7 +86,7 @@ public class Vehicle implements Serializable{
 				int kmsUntilNext = m.getKm() - darRecordPorMantenimiento(m.getNombre()).getKmPassedSince();
 				int daysUntilNext = 7*kmsUntilNext/weeklyKM;
 				/**
-				 * si en una semana se recorren 'frequency' km, i.e, 1sem/weeklyKM km,
+				 * si en una semana se recorren weeklyKM km, i.e, 1sem/weeklyKM km,
 				 * entonces se debe multiplicar por 7 para obtener 7dias/weeklyKM km, 
 				 * y finalmente se multiplica por 'kmsUntilNext' km;
 				 * obteniendo 7*kmsUntilNext/weeklyKM dias
