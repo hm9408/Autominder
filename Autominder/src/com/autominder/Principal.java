@@ -41,8 +41,7 @@ public class Principal {
 			vehiculos = new ArrayList<Vehicle>();
 		}
 		if (mantenimientos==null) {
-			mantenimientos = new ArrayList<Maintenance>();
-			cargarMantenimientosIniciales();
+			mantenimientos = cargarMantenimientosIniciales();
 		}
 
 	}
@@ -164,7 +163,6 @@ public class Principal {
 	 * @return true si se logró agregar el vehiculo, false si ya existe un vehiculo con ese nombre
 	 */
 	public boolean addVehicle(Vehicle v) {
-		boolean existe = false;
 		for (int i = 0; i < vehiculos.size(); i++) {
 			Vehicle act = vehiculos.get(i);
 			if(act.getName().equals(v.getName())) return false;
