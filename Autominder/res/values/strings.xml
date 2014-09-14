@@ -18,4 +18,8 @@
     <string name="reminders">Recordatorios</string>
     <string name="we_recomend_these_reminders">Te recomendamos estos recordatorios, luego podrás editarlos y agregar más</string>
     <string name="you_must_provide">Debes proveer la ultima vez que hiciste esos mantenimientos</string>
-</resources>
+    <string name="empty_vehicle_list">No vehicles found.</string>
+    <string name="km_actual">Kilometraje Actual</string>
+    <string name="km_semanales">Kilómetros semanales (aprox.)</string>
+    <string name="update">Actualizar</string>
+</resources>   

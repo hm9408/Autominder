@@ -5,10 +5,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import com.autominder.Principal;
-import com.autominder.R;
-import com.autominder.Reminder;
-
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
@@ -17,23 +13,46 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity implements ActionBar.TabListener {
+import com.autominder.Principal;
+import com.autominder.R;
+import com.autominder.Reminder;
+import com.autominder.Vehicle;
 
-	
-	private Principal instancia;
-	
+public class MainActivity extends Activity implements ActionBar.TabListener{
+
+
+	private Principal instancia; 
+	private DrawerLayout mDrawerLayout;
+	private ListView mDrawerList;
+	private ActionBarDrawerToggle mDrawerToggle;
+	private Vehicle selected;
+
+	// nav drawer title
+	private CharSequence mDrawerTitle;
+
+	// used to store app title
+	private CharSequence mTitle;
+
+
+	private NavDrawerListAdapter adapter;
+
 	AlarmManager alarmManager;
-	
+
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -48,19 +67,20 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	 */
 	ViewPager mViewPager;
 
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		instancia = Principal.darInstancia(getApplicationContext());
+
+		instancia = Principal.darInstancia(this);
 		alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-		
+
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
 		final ActionBar actionBar = getActionBar();
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
 		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
@@ -95,8 +115,54 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 		crearNotificationService();
 
+		mTitle = mDrawerTitle = getTitle();
+
+		// load slide menu items
+
+
+		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+		mDrawerList = (ListView) findViewById(R.id.left_drawer);
+		View empty = findViewById(android.R.id.empty);
+		mDrawerList.setEmptyView(empty);
+
+		mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
+
+
+		// setting the nav drawer list adapter
+		adapter = new NavDrawerListAdapter(getApplicationContext(),
+				instancia.getVehiculos());
+		mDrawerList.setAdapter(adapter);
+
+		// enabling action bar app icon and behaving it as toggle button
+		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+
+		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+				R.drawable.ic_launcher, //nav menu toggle icon
+				R.string.app_name, // nav drawer open - description for accessibility
+				R.string.app_name // nav drawer close - description for accessibility
+				){
+			public void onDrawerClosed(View view) {
+				getActionBar().setTitle(mTitle);
+				// calling onPrepareOptionsMenu() to show action bar icons
+				invalidateOptionsMenu();
+			}
+
+			public void onDrawerOpened(View drawerView) {
+				getActionBar().setTitle(mDrawerTitle);
+				// calling onPrepareOptionsMenu() to hide action bar icons
+				invalidateOptionsMenu();
+			}
+		};
+		mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+		//if (savedInstanceState == null) {
+		// on first time display view for first nav item
+		//displayView(0);
+		//}
+
 	}
-	
+
 	/**
 	 * Se debe llamar este metodo cuando se recalculen los reminders de un carro,
 	 * es decir, cuando se crea un carro, cuando se modifica un weeklyKM, o cuando
@@ -126,7 +192,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				reminderDates.add(r.getFecha());
 			}
 		}
-		
+
+	}
+	/**
+	 * Slide menu item click listener
+	 * */
+	private class SlideMenuClickListener implements
+	ListView.OnItemClickListener {
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			selected = instancia.getVehiculos().get(position); //sets selected vehicle
+		}
 	}
 
 	@Override
@@ -138,12 +215,22 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	}
 
 	@Override
+	public void onConfigurationChanged(Configuration newConfig) {
+		super.onConfigurationChanged(newConfig);
+		// Pass any configuration change to the drawer toggls
+		mDrawerToggle.onConfigurationChanged(newConfig);
+	}
+
+
+	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle action bar item clicks here. The action bar will
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.add_vehicle) {
+			Intent i = new Intent(this, AddVehicleActivity.class);
+			startActivity(i);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -178,9 +265,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 			fragments = new ArrayList<Fragment>();
-			fragments.add( new FragmentoHome());
-			fragments.add( new FragmentoRecordatorios());
-			fragments.add( new FragmentoDistancia());
+			fragments.add( new FragmentoRecords(selected));
+			fragments.add( new FragmentoInfoVehiculo(selected));
+			fragments.add( new FragmentoReminders(selected));
 		}
 
 		@Override

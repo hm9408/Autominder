@@ -27,33 +27,22 @@ public class Principal {
 	public static final String file = "Autominder.dat";
 
 	private static Principal instancia;
-	
+
 	private Context c;
 
 	private ArrayList<Vehicle> vehiculos;
 	private ArrayList<Maintenance> mantenimientos;
 
 	public Principal(Context context) {
-		
+
 		c = context;
-		boolean e;
-		try {
-			e = existenDatos();
-			//cargarMantenimientosIniciales();
-			//new Vehicle("Honda", 20, 100000, cargarMantenimientosIniciales(), records)
-			if(!e){
-				if(vehiculos == null)vehiculos = new ArrayList<Vehicle>();
-				if(mantenimientos == null)mantenimientos = new ArrayList<Maintenance>();
-			}
-		} catch (StreamCorruptedException e1) {
-			System.out.println("StreamCorruptedException");
-			e1.printStackTrace();
-		} catch (ClassNotFoundException e1) {
-			System.out.println("ClassNotFoundException");
-			e1.printStackTrace();
-		} catch (IOException e1) {
-			System.out.println("IOException");
-			e1.printStackTrace();
+		loadState();
+		if (vehiculos==null) {
+			vehiculos = new ArrayList<Vehicle>();
+		}
+		if (mantenimientos==null) {
+			mantenimientos = new ArrayList<Maintenance>();
+			cargarMantenimientosIniciales();
 		}
 
 	}
@@ -62,27 +51,27 @@ public class Principal {
 		try {
 			ArrayList<Maintenance> a = new ArrayList<Maintenance>();
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	        DocumentBuilder builder = factory.newDocumentBuilder();
+			DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.parse(getClass().getResourceAsStream("/maintenance_types.xml"));
-	        NodeList nodeList = document.getDocumentElement().getChildNodes();
-	        for (int i = 0; i < nodeList.getLength(); i++) {
-	             Node node = nodeList.item(i);
-	             if (node.getNodeType() == Node.ELEMENT_NODE) {
-	                Element elem = (Element) node;
-	                // Get the value of all sub-elements.
+			NodeList nodeList = document.getDocumentElement().getChildNodes();
+			for (int i = 0; i < nodeList.getLength(); i++) {
+				Node node = nodeList.item(i);
+				if (node.getNodeType() == Node.ELEMENT_NODE) {
+					Element elem = (Element) node;
+					// Get the value of all sub-elements.
 					int type = Integer.parseInt(elem.getElementsByTagName("type")
-	                                    .item(0).getChildNodes().item(0).getNodeValue());
-	                String nombre = elem.getElementsByTagName("name").item(0)
-	                                    .getChildNodes().item(0).getNodeValue();
-	                int km = Integer.parseInt(elem.getElementsByTagName("km")
-                            .item(0).getChildNodes().item(0).getNodeValue());
-	                long tiempo = Long.parseLong(elem.getElementsByTagName("time")
-                            .item(0).getChildNodes().item(0).getNodeValue());
-	                Maintenance m = new Maintenance(type, nombre, km, tiempo);
-	                a.add(m);
-	            }
-	        }
-	        return a;
+							.item(0).getChildNodes().item(0).getNodeValue());
+					String nombre = elem.getElementsByTagName("name").item(0)
+							.getChildNodes().item(0).getNodeValue();
+					int km = Integer.parseInt(elem.getElementsByTagName("km")
+							.item(0).getChildNodes().item(0).getNodeValue());
+					long tiempo = Long.parseLong(elem.getElementsByTagName("time")
+							.item(0).getChildNodes().item(0).getNodeValue());
+					Maintenance m = new Maintenance(type, nombre, km, tiempo);
+					a.add(m);
+				}
+			}
+			return a;
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -103,18 +92,24 @@ public class Principal {
 	}
 
 	@SuppressWarnings("unchecked")
-	private boolean existenDatos() throws StreamCorruptedException, IOException, ClassNotFoundException {
-
-		FileInputStream fis = new FileInputStream(new File(file));
-		ObjectInputStream ois = new ObjectInputStream(fis);
-		vehiculos = (ArrayList<Vehicle>) ois.readObject();
-		mantenimientos = (ArrayList<Maintenance>) ois.readObject();
-		fis.close();
-		ois.close();
-		if (vehiculos == null && mantenimientos == null) {
-			return false;
-		}
-		return true;		
+	public void loadState(){
+		try {
+			FileInputStream fis = new FileInputStream(new File(file));
+			ObjectInputStream ois = new ObjectInputStream(fis);
+			vehiculos = (ArrayList<Vehicle>) ois.readObject();
+			mantenimientos = (ArrayList<Maintenance>) ois.readObject();
+			fis.close();
+			ois.close();
+		} catch (StreamCorruptedException e1) {
+			System.out.println("StreamCorruptedException");
+			e1.printStackTrace();
+		} catch (ClassNotFoundException e1) {
+			System.out.println("ClassNotFoundException");
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			System.out.println("IOException");
+			e1.printStackTrace();
+		}		
 	}
 
 	public ArrayList<Maintenance> getMantenimientos() {
