@@ -58,7 +58,7 @@ public class Principal {
 
 	}
 
-	private ArrayList<Maintenance> cargarMantenimientosIniciales() {
+	public ArrayList<Maintenance> cargarMantenimientosIniciales() {
 		try {
 			ArrayList<Maintenance> a = new ArrayList<Maintenance>();
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -161,5 +161,22 @@ public class Principal {
 			e.printStackTrace();
 		}
 
+	}
+	
+	/**
+	 * 
+	 * @param v
+	 * @return true si se logró agregar el vehiculo, false si ya existe un vehiculo con ese nombre
+	 */
+	public boolean addVehicle(Vehicle v) {
+		boolean existe = false;
+		for (int i = 0; i < vehiculos.size(); i++) {
+			Vehicle act = vehiculos.get(i);
+			if(act.getName().equals(v.getName())) return false;
+		}
+		vehiculos.add(v);
+		saveState();
+		return true;
+		
 	}
 }
