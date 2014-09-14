@@ -5,14 +5,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import moviles.uniandes.edu.co.mundo.MercaMovil;
-
 import com.autominder.Principal;
 import com.autominder.R;
-import com.autominder.R.id;
-import com.autominder.R.layout;
-import com.autominder.R.menu;
-import com.autominder.R.string;
 import com.autominder.Reminder;
 
 import android.app.ActionBar;
