@@ -74,6 +74,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		super.onCreate(savedInstanceState);
 
 		instancia = Principal.darInstancia(this);
+		if (instancia.getVehiculos().isEmpty()) {
+			Intent i = new Intent(this, AddVehicleActivity.class);
+			startActivity(i);
+		}
 		alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 
 		setContentView(R.layout.activity_main);
@@ -253,7 +257,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	public void onTabReselected(ActionBar.Tab tab,
 			FragmentTransaction fragmentTransaction) {
 	}
-	
+
 	/**
 	 * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
 	 * one of the sections/tabs/pages.

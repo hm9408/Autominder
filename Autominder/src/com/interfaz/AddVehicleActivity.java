@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 public class AddVehicleActivity extends Activity {
@@ -40,7 +39,7 @@ public class AddVehicleActivity extends Activity {
 	private Button addVehicleButton;
 
 	private Principal instancia;
-
+	
 	ArrayList<Maintenance> a;
 
 	@Override
@@ -93,7 +92,7 @@ public class AddVehicleActivity extends Activity {
 				int vCurrentKmCount = Integer.parseInt(currentKmCount.getText().toString());
 				try{
 					int vWeeklyKM = Integer.parseInt(weeklyKM.getText().toString());
-
+					
 					ArrayList<Record> r = new ArrayList<Record>();
 					if(cb1.isChecked()){
 						try {
@@ -106,7 +105,7 @@ public class AddVehicleActivity extends Activity {
 					}else{
 						a.remove(0);
 					}
-
+					
 					if(cb2.isChecked()){
 						try {
 							int vKm2 = Integer.parseInt(km2.getText().toString());
@@ -118,7 +117,7 @@ public class AddVehicleActivity extends Activity {
 					}else{
 						a.remove(1);
 					}
-
+					
 					if(cb3.isChecked()){
 						try {
 							int vKm3 = Integer.parseInt(km3.getText().toString());
@@ -130,14 +129,11 @@ public class AddVehicleActivity extends Activity {
 					}else{
 						a.remove(2);
 					}
-
+					
 					Vehicle v = new Vehicle(vName, vWeeklyKM, vCurrentKmCount, a, r);
 					if(!instancia.addVehicle(v)){
 						showDialog("Vehiculo existente", "Ya existe un vehiculo con el nombre ingresado, prueba con otro");
 					}
-					NavDrawerListAdapter adapter = (NavDrawerListAdapter)((ListView)findViewById(R.id.left_drawer)).getAdapter();
-					adapter.notifyDataSetChanged();
-					finish();
 				}catch(NumberFormatException e){
 					showDialog("Kilometraje semanal inválido", "El kilometraje semanal ingresado es inválido");
 				}
