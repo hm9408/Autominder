@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<maintenances>
+    <maintenance ID="oil">
+		<name>Aceite</name>
+		<type>1</type>
+		<km>5000</km>
+		<time></time>
+	</maintenance>
+    <maintenance ID="tires">
+		<name>Llantas</name>
+		<type>1</type>
+		<km>5000</km>
+		<time></time>
+	</maintenance>
+    <maintenance ID="brakes">
+		<name>Frenos</name>
+		<type>1</type>
+		<km>10000</km>
+		<time></time>
+	</maintenance>
+    <maintenance ID="belts">
+		<name>Correas y mangueras</name>
+		<type>1</type>
+		<km>100000</km>
+		<time></time>
+	</maintenance>
+    <maintenance ID="wheels">
+		<name>Balanceo y alineacion</name>
+		<type>1</type>
+		<km>10000</km>
+		<time></time>
+	</maintenance>
+    <maintenance ID="steering_fluid">
+		<name>Liquido Hidraulico</name>
+		<type>1</type>
+		<km>5000</km>
+		<time></time>
+	</maintenance>
+    <maintenance ID="tax">
+		<name>Impuesto</name>
+		<type>2</type>
+		<km></km>
+		<time>31536000000</time>
+	</maintenance>
+    <maintenance ID="insurance">
+		<name>Seguro</name>
+		<type>2</type>
+		<km></km>
+		<time>31536000000</time>
+	</maintenance>
+</maintenances>
