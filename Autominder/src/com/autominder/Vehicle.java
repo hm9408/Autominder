@@ -67,6 +67,12 @@ public class Vehicle implements Serializable{
 		return records;
 	}
 	
+	/**
+	 * El ususario tambien puede darse cuenta de que su estimado de kilometraje
+	 * semanal fue una burrada, y querra cambiarlo. Ni modo. Tocara entonces
+	 * guardar el nuevo kilometraje semanal y recalcular los reminders.
+	 * @param newWeeklyKM
+	 */
 	public void setWeeklyKM(int weeklyKM) {
 		this.weeklyKM=weeklyKM;
 		calcularRecordatorios();
@@ -91,7 +97,7 @@ public class Vehicle implements Serializable{
 				 * y finalmente se multiplica por 'kmsUntilNext' km;
 				 * obteniendo 7*kmsUntilNext/weeklyKM dias
 				 */
-				Reminder rem = new Reminder(m.getNombre(), new Date(new Date().getTime() + daysUntilNext*24*60*60*1000));
+				Reminder rem = new Reminder(m.getNombre(), new Date(new Date().getTime() + daysUntilNext*24*60*60*1000), name);
 				brandNewReminders.add(rem);
 			}
 		}
@@ -107,6 +113,10 @@ public class Vehicle implements Serializable{
 		return null;
 	}
 
+	/**
+	 * Cada vez que se carga la vista de un carro, se debe pedir su currentKmCount
+	 * @return
+	 */
 	@SuppressLint("SimpleDateFormat") 
 	public int getCurrentKmCount() {
 		SimpleDateFormat df = new SimpleDateFormat("dd-MMM-YYYY");
@@ -153,17 +163,6 @@ public class Vehicle implements Serializable{
 			Record r = records.get(i);
 			r.setKmPassedSince(r.getKmPassedSince()+diferencia);
 		}
-		calcularRecordatorios();
-	}
-	
-	/**
-	 * El ususario tambien puede darse cuenta de que su estimado de kilometraje
-	 * semanal fue una burrada, y querra cambiarlo. Ni modo. Tocara entonces
-	 * guardar el nuevo kilometraje semanal y recalcular los reminders.
-	 * @param newWeeklyKM
-	 */
-	public void modifyWeeklyKM(int newWeeklyKM){
-		weeklyKM = newWeeklyKM;
 		calcularRecordatorios();
 	}
 	

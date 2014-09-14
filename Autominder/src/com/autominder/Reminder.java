@@ -10,10 +10,13 @@ public class Reminder implements Serializable{
 	private String nombreManten;
 	
 	private Date fecha;
+	
+	private String nombreCarro;
 
-	public Reminder(String nombreManten, Date fecha) {
+	public Reminder(String nombreManten, Date fecha, String nombreCarro) {
 		this.nombreManten = nombreManten;
 		this.fecha = fecha;
+		this.nombreCarro = nombreCarro;
 	}
 
 	public String getNombreManten() {
@@ -22,6 +25,10 @@ public class Reminder implements Serializable{
 
 	public Date getFecha() {
 		return fecha;
+	}
+
+	public String getNombreCarro() {
+		return nombreCarro;
 	}
 	
 }

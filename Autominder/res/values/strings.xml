@@ -6,5 +6,8 @@
     <string name="title_section2">es</string>
     <string name="title_section3">putazo</string>
     <string name="action_settings">Settings</string>
-
+    <string name="service_description">notification service for when a car needs maintenance</string>
+    <string name="you_have">¡Tienes</string>
+    <string name="reminders_due">mantenimientos para hoy!</string>
+    <string name="maintenance_reminder_sub">Toca para ver</string>
 </resources>

@@ -76,4 +76,14 @@ public class Principal {
 		Maintenance m = new Maintenance(tipo, nombre, km, tiempo);
 		mantenimientos.add(m);
 	}
+
+	
+	public ArrayList<Reminder> obtenerReminders() {
+		ArrayList<Reminder> allReminders = new ArrayList<Reminder>();
+		for (int i = 0; i < vehiculos.size(); i++) {
+			Vehicle act = vehiculos.get(i);
+			allReminders.addAll(act.getReminders());
+		}
+		return allReminders;
+	}
 }

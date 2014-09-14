@@ -1,20 +1,28 @@
 package com.interfaz;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import moviles.uniandes.edu.co.mundo.MercaMovil;
+
+import com.autominder.Principal;
 import com.autominder.R;
 import com.autominder.R.id;
 import com.autominder.R.layout;
 import com.autominder.R.menu;
 import com.autominder.R.string;
+import com.autominder.Reminder;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -27,6 +35,9 @@ import android.widget.TextView;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
 
+	
+	private Principal instancia;
+	
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -44,6 +55,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		instancia = Principal.darInstancia(getApplicationContext());
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
@@ -62,12 +75,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
 		// a reference to the Tab.
 		mViewPager
-				.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-					@Override
-					public void onPageSelected(int position) {
-						actionBar.setSelectedNavigationItem(position);
-					}
-				});
+		.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+			@Override
+			public void onPageSelected(int position) {
+				actionBar.setSelectedNavigationItem(position);
+			}
+		});
 
 		// For each of the sections in the app, add a tab to the action bar.
 		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
@@ -80,6 +93,39 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					.setTabListener(this)
 					);
 		}
+
+
+		crearNotificationService();
+
+	}
+	
+	/**
+	 * Se debe llamar este metodo cuando se recalculen los reminders de un carro,
+	 * es decir, cuando se crea un carro, cuando se modifica un weeklyKM, o cuando
+	 * se modifica un currentKmCount
+	 */
+	public void crearNotificationService(){
+		Intent myIntent = new Intent(this , NotificationService.class);
+		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+		PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
+
+		ArrayList<Reminder> allReminders = instancia.obtenerReminders();
+		myIntent.putExtra("allReminders", allReminders);
+		/**
+		 * se crea un arreglo de fechas y solo se genera una alarma si el recordatorio
+		 * respectivo no esta ya en el arreglo, finalmente se agrega la fecha. Esto con
+		 * el fin de evitar mas de una alarma en el mismo dia.
+		 */
+		ArrayList<Date> reminderDates = new ArrayList<Date>();
+		for (int i = 0; i < allReminders.size(); i++) {
+			Reminder r = allReminders.get(i);
+			if(!reminderDates.contains(r.getFecha())){
+				alarmManager.set(AlarmManager.RTC_WAKEUP, r.getFecha().getTime(), pendingIntent);
+				reminderDates.add(r.getFecha());
+			}
+			
+		}
+		
 	}
 
 	@Override
@@ -141,7 +187,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 			// getItem is called to instantiate the fragment for the given page.
 			// Return a PlaceholderFragment (defined as a static inner class
 			// below).
-	
+
 			return fragments.get(position);
 		}
 
