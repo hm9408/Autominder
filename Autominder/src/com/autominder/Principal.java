@@ -39,7 +39,8 @@ public class Principal {
 		boolean e;
 		try {
 			e = existenDatos();
-			cargarTiposMantenimientos();
+			//cargarMantenimientosIniciales();
+			//new Vehicle("Honda", 20, 100000, cargarMantenimientosIniciales(), records)
 			if(!e){
 				if(vehiculos == null)vehiculos = new ArrayList<Vehicle>();
 				if(mantenimientos == null)mantenimientos = new ArrayList<Maintenance>();
@@ -57,8 +58,9 @@ public class Principal {
 
 	}
 
-	private void cargarTiposMantenimientos() {
+	private ArrayList<Maintenance> cargarMantenimientosIniciales() {
 		try {
+			ArrayList<Maintenance> a = new ArrayList<Maintenance>();
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder builder = factory.newDocumentBuilder();
 			Document document = builder.parse(getClass().getResourceAsStream("/maintenance_types.xml"));
@@ -77,19 +79,22 @@ public class Principal {
 	                long tiempo = Long.parseLong(elem.getElementsByTagName("time")
                             .item(0).getChildNodes().item(0).getNodeValue());
 	                Maintenance m = new Maintenance(type, nombre, km, tiempo);
-	                //TODO ADD
-	                mantenimientos.add(m);
+	                a.add(m);
 	            }
 	        }
+	        return a;
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		}
 	}
 
