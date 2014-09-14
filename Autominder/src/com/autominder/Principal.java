@@ -10,6 +10,16 @@ import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import android.content.Context;
 
 public class Principal {
@@ -29,6 +39,7 @@ public class Principal {
 		boolean e;
 		try {
 			e = existenDatos();
+			cargarTiposMantenimientos();
 			if(!e){
 				if(vehiculos == null)vehiculos = new ArrayList<Vehicle>();
 				if(mantenimientos == null)mantenimientos = new ArrayList<Maintenance>();
@@ -44,6 +55,42 @@ public class Principal {
 			e1.printStackTrace();
 		}
 
+	}
+
+	private void cargarTiposMantenimientos() {
+		try {
+			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+	        DocumentBuilder builder = factory.newDocumentBuilder();
+			Document document = builder.parse(getClass().getResourceAsStream("/maintenance_types.xml"));
+	        NodeList nodeList = document.getDocumentElement().getChildNodes();
+	        for (int i = 0; i < nodeList.getLength(); i++) {
+	             Node node = nodeList.item(i);
+	             if (node.getNodeType() == Node.ELEMENT_NODE) {
+	                Element elem = (Element) node;
+	                // Get the value of all sub-elements.
+					int type = Integer.parseInt(elem.getElementsByTagName("type")
+	                                    .item(0).getChildNodes().item(0).getNodeValue());
+	                String nombre = elem.getElementsByTagName("name").item(0)
+	                                    .getChildNodes().item(0).getNodeValue();
+	                int km = Integer.parseInt(elem.getElementsByTagName("km")
+                            .item(0).getChildNodes().item(0).getNodeValue());
+	                long tiempo = Long.parseLong(elem.getElementsByTagName("time")
+                            .item(0).getChildNodes().item(0).getNodeValue());
+	                Maintenance m = new Maintenance(type, nombre, km, tiempo);
+	                //TODO ADD
+	                mantenimientos.add(m);
+	            }
+	        }
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public ArrayList<Vehicle> getVehiculos() {
