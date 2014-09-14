@@ -3,24 +3,29 @@ package com.autominder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 
 import android.content.Context;
 
 public class Principal {
-	
+
 	public static final String file = "Autominder.dat";
-	
+
 	private static Principal instancia;
+	
+	private Context c;
 
 	private ArrayList<Vehicle> vehiculos;
 	private ArrayList<Maintenance> mantenimientos;
-	
+
 	public Principal(Context context) {
 		
+		c = context;
 		boolean e;
 		try {
 			e = existenDatos();
@@ -38,7 +43,7 @@ public class Principal {
 			System.out.println("IOException");
 			e1.printStackTrace();
 		}
-		
+
 	}
 
 	public ArrayList<Vehicle> getVehiculos() {
@@ -52,7 +57,8 @@ public class Principal {
 		ObjectInputStream ois = new ObjectInputStream(fis);
 		vehiculos = (ArrayList<Vehicle>) ois.readObject();
 		mantenimientos = (ArrayList<Maintenance>) ois.readObject();
-		
+		fis.close();
+		ois.close();
 		if (vehiculos == null && mantenimientos == null) {
 			return false;
 		}
@@ -71,13 +77,13 @@ public class Principal {
 		}
 		return instancia;
 	}
-	
+
 	public void agregarMantenimiento(String nombre, int tipo, int km, int tiempo){
 		Maintenance m = new Maintenance(tipo, nombre, km, tiempo);
 		mantenimientos.add(m);
 	}
 
-	
+
 	public ArrayList<Reminder> obtenerReminders() {
 		ArrayList<Reminder> allReminders = new ArrayList<Reminder>();
 		for (int i = 0; i < vehiculos.size(); i++) {
@@ -85,5 +91,23 @@ public class Principal {
 			allReminders.addAll(act.getReminders());
 		}
 		return allReminders;
+	}
+
+	public void saveState(){
+		try {
+			FileOutputStream fos = c.openFileOutput(file, Context.MODE_PRIVATE);
+			ObjectOutputStream oos = new ObjectOutputStream(fos);
+			oos.writeObject(vehiculos);
+			oos.writeObject(mantenimientos);
+			oos.close();
+			fos.close();	
+			System.out.println("Saved "+vehiculos.size()+" vehicles.");	
+			System.out.println("Saved "+mantenimientos.size()+" maintenances.");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 	}
 }
