@@ -32,6 +32,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	
 	private Principal instancia;
 	
+	AlarmManager alarmManager;
+	
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
 	 * fragments for each of the sections. We use a {@link FragmentPagerAdapter}
@@ -51,6 +53,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		super.onCreate(savedInstanceState);
 		
 		instancia = Principal.darInstancia(getApplicationContext());
+		alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+		
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
@@ -96,19 +100,23 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	/**
 	 * Se debe llamar este metodo cuando se recalculen los reminders de un carro,
 	 * es decir, cuando se crea un carro, cuando se modifica un weeklyKM, o cuando
-	 * se modifica un currentKmCount
+	 * se modifica un currentKmCount.<br><br>
+	 * 
+	 * Si es pertinente, se deben borrar todas las alertas creadas anteriormente, a
+	 * traves del metodo:<br><br>
+	 * 
+	 * <b>alarmManager.cancel(PendingIntent.getService(this, 0, myIntent, 0))</b>
 	 */
 	public void crearNotificationService(){
 		Intent myIntent = new Intent(this , NotificationService.class);
-		AlarmManager alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 		PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
 
 		ArrayList<Reminder> allReminders = instancia.obtenerReminders();
 		myIntent.putExtra("allReminders", allReminders);
 		/**
-		 * se crea un arreglo de fechas y solo se genera una alarma si el recordatorio
-		 * respectivo no esta ya en el arreglo, finalmente se agrega la fecha. Esto con
-		 * el fin de evitar mas de una alarma en el mismo dia.
+		 * se crea un arreglo de fechas y solo se genera una alarma si la fecha del 
+		 * recordatorio respectivo no esta ya en el arreglo, finalmente se agrega la
+		 * fecha. Esto con el fin de evitar mas de una alarma/notificacion en el mismo dia.
 		 */
 		ArrayList<Date> reminderDates = new ArrayList<Date>();
 		for (int i = 0; i < allReminders.size(); i++) {
@@ -117,7 +125,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				alarmManager.set(AlarmManager.RTC_WAKEUP, r.getFecha().getTime(), pendingIntent);
 				reminderDates.add(r.getFecha());
 			}
-			
 		}
 		
 	}
