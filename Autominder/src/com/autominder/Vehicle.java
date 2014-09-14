@@ -10,7 +10,7 @@ import java.util.Date;
 public class Vehicle implements Serializable{
 
 	private static final long serialVersionUID = -7614135801653779184L;
-	
+
 	private String name;
 	private boolean favorite;
 	/**
@@ -34,7 +34,7 @@ public class Vehicle implements Serializable{
 		reminders = new ArrayList<Reminder>();//los reminders los calcula el vehicle
 		calcularRecordatorios();
 	}
-	
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -42,31 +42,31 @@ public class Vehicle implements Serializable{
 	public void setFavorite(boolean favorite) {
 		this.favorite = favorite;
 	}
-	
+
 	public ArrayList<Maintenance> getMaintenances() {
 		return maintenances;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public boolean isFavorite() {
 		return favorite;
 	}
-	
+
 	public int getWeeklyKM() {
 		return weeklyKM;
 	}
-	
+
 	public ArrayList<Reminder> getReminders() {
 		return reminders;
 	}
-	
+
 	public ArrayList<Record> getRecords() {
 		return records;
 	}
-	
+
 	/**
 	 * El ususario tambien puede darse cuenta de que su estimado de kilometraje
 	 * semanal fue una burrada, y querra cambiarlo. Ni modo. Tocara entonces
@@ -99,6 +99,10 @@ public class Vehicle implements Serializable{
 				 */
 				Reminder rem = new Reminder(m.getNombre(), new Date(new Date().getTime() + daysUntilNext*24*60*60*1000), name);
 				brandNewReminders.add(rem);
+			}else{
+				long timeUntilNext = m.getTiempo() - (new Date().getTime()-darRecordPorMantenimiento(m.getNombre()).getFecha().getTime());
+				Reminder rem = new Reminder(m.getNombre(), new Date(timeUntilNext), name);
+				brandNewReminders.add(rem);
 			}
 		}
 		reminders = brandNewReminders;
@@ -125,18 +129,18 @@ public class Vehicle implements Serializable{
 			{
 				//entonces se averigua cuantos dias han pasado,
 				int daysPassed = (int) ((new Date().getTime() - df.parse(df.format(lastDayChecked)).getTime()+24*60*60*1000)/(24*60*60*1000));
-				
+
 				//se actualizan los KmPassedSince de los records y
 				for (int i = 0; i < records.size(); i++) {
 					Record r = records.get(i);
 					r.setKmPassedSince(r.getKmPassedSince()+(weeklyKM*daysPassed/7));
 				}
-				
+
 				//se actualiza el currentKmCount y el lastDayChecked. Pretty cool right?
 				currentKmCount+=weeklyKM*daysPassed/7;
 				lastDayChecked = new Date();
 				return currentKmCount;
-				
+
 			}else{
 				return currentKmCount;
 			}
@@ -145,9 +149,9 @@ public class Vehicle implements Serializable{
 			e.printStackTrace();
 			return 999999;
 		}
-		
+
 	}
-	
+
 	/**
 	 * Al usuario puede darle la gana de modificar su actual cuenta de km,
 	 * esta nueva cuenta de km puede ser menor o mayor a la actual; como sea, 
@@ -165,5 +169,5 @@ public class Vehicle implements Serializable{
 		}
 		calcularRecordatorios();
 	}
-	
+
 }

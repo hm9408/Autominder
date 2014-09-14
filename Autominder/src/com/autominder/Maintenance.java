@@ -13,9 +13,9 @@ public class Maintenance implements Serializable{
 	private String nombre;
 	
 	private int km;
-	private int tiempo;
+	private long tiempo;
 		
-	public Maintenance(int type, String nombre, int km, int tiempo) {
+	public Maintenance(int type, String nombre, int km, long tiempo) {
 		this.type = type;
 		this.nombre = nombre;
 		this.km = km;
@@ -31,7 +31,7 @@ public class Maintenance implements Serializable{
 	public int getKm() {
 		return km;
 	}
-	public int getTiempo() {
+	public long getTiempo() {
 		return tiempo;
 	}
 	

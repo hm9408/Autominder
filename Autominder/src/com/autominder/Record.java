@@ -1,6 +1,7 @@
 package com.autominder;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class Record implements Serializable{
 
@@ -10,13 +11,15 @@ public class Record implements Serializable{
 	private String nombreTaller;
 	private int kmPassedSince;
 	private String maintenanceName;
+	private Date fecha;
 	
 	public Record(double cost, String nombreTaller, int kmPassedSince,
-			String maintenanceName) {
+			String maintenanceName, Date fecha) {
 		this.cost = cost;
 		this.nombreTaller = nombreTaller;
 		this.kmPassedSince = kmPassedSince;
 		this.maintenanceName = maintenanceName;
+		this.fecha = fecha;
 	}
 
 	public double getCost() {
@@ -37,6 +40,10 @@ public class Record implements Serializable{
 
 	public String getMaintenanceName() {
 		return maintenanceName;
+	}
+
+	public Date getFecha() {
+		return fecha;
 	}
 		
 }
