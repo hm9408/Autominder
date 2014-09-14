@@ -31,6 +31,7 @@ import android.widget.TextView;
 import com.autominder.Principal;
 import com.autominder.R;
 import com.autominder.Reminder;
+import com.autominder.Vehicle;
 
 public class MainActivity extends Activity implements ActionBar.TabListener{
 
@@ -39,6 +40,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
+	private Vehicle selected;
 
 	// nav drawer title
 	private CharSequence mDrawerTitle;
@@ -46,10 +48,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	// used to store app title
 	private CharSequence mTitle;
 
-	// slide menu items
-	private String[] navMenuTitles;
 
-	private ArrayList<NavDrawerItem> navDrawerItems;
 	private NavDrawerListAdapter adapter;
 
 	AlarmManager alarmManager;
@@ -120,25 +119,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 
 		// load slide menu items
 
-		setVehicleNamesNavDrawer();
 
 		mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 		mDrawerList = (ListView) findViewById(R.id.left_drawer);
 		View empty = findViewById(android.R.id.empty);
 		mDrawerList.setEmptyView(empty);
 
-		navDrawerItems = new ArrayList<NavDrawerItem>();
-
-		for (int i = 0; i < navMenuTitles.length; i++) {
-			navDrawerItems.add(new NavDrawerItem(navMenuTitles[i]));
-		}
-
 		mDrawerList.setOnItemClickListener(new SlideMenuClickListener());
 
 
 		// setting the nav drawer list adapter
 		adapter = new NavDrawerListAdapter(getApplicationContext(),
-				navDrawerItems);
+				instancia.getVehiculos());
 		mDrawerList.setAdapter(adapter);
 
 		// enabling action bar app icon and behaving it as toggle button
@@ -210,8 +202,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			// TODO Auto-generated method stub
-
+			selected = instancia.getVehiculos().get(position); //sets selected vehicle
 		}
 	}
 
@@ -237,7 +228,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.action_settings) {
+		if (id == R.id.add_vehicle) {
+			Intent i = new Intent(this, AddVehicleActivity.class);
+			startActivity(i);
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
@@ -272,9 +265,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 			fragments = new ArrayList<Fragment>();
-			fragments.add( new FragmentoHome());
-			fragments.add( new FragmentoRecordatorios());
-			fragments.add( new FragmentoDistancia());
+			fragments.add( new FragmentoRecords(selected));
+			fragments.add( new FragmentoInfoVehiculo(selected));
+			fragments.add( new FragmentoReminders(selected));
 		}
 
 		@Override
@@ -304,21 +297,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			}
 			return null;
 		}
-	}
-
-	public void setVehicleNamesNavDrawer()
-	{
-		//get all names from the vehicle list
-		ArrayList<String> names = new ArrayList<String>();
-		for (int i = 0; i < instancia.getVehiculos().size(); i++) {
-			names.add(instancia.getVehiculos().get(i).getName());
-		}
-		//convert arraylist to string array
-		String[] namesArray = new String[names.size()];
-		namesArray = names.toArray(namesArray);
-		for(String s : namesArray)
-			System.out.println(s);
-		navMenuTitles=namesArray;
 	}
 
 	/**

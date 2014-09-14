@@ -3,6 +3,7 @@ package com.interfaz;
 import java.util.ArrayList;
 
 import com.autominder.R;
+import com.autominder.Vehicle;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,21 +16,21 @@ import android.widget.TextView;
 public class NavDrawerListAdapter extends BaseAdapter {
 
 	private Context context;
-    private ArrayList<NavDrawerItem> navDrawerItems;
+    private ArrayList<Vehicle> vehicles;
      
-    public NavDrawerListAdapter(Context context, ArrayList<NavDrawerItem> navDrawerItems){
+    public NavDrawerListAdapter(Context context, ArrayList<Vehicle> vehicles){
         this.context = context;
-        this.navDrawerItems = navDrawerItems;
+        this.vehicles = vehicles;
     }
  
     @Override
     public int getCount() {
-        return navDrawerItems.size();
+        return vehicles.size();
     }
  
     @Override
     public Object getItem(int position) {       
-        return navDrawerItems.get(position);
+        return vehicles.get(position);
     }
  
     @Override
@@ -46,18 +47,9 @@ public class NavDrawerListAdapter extends BaseAdapter {
         }
           
         TextView txtTitle = (TextView) convertView.findViewById(R.id.title);
-        TextView txtCount = (TextView) convertView.findViewById(R.id.counter);
           
-        txtTitle.setText(navDrawerItems.get(position).getTitle());
+        txtTitle.setText(vehicles.get(position).getName());
          
-        // displaying count
-        // check whether it set visible or not
-        if(navDrawerItems.get(position).getCounterVisibility()){
-            txtCount.setText(navDrawerItems.get(position).getCount());
-        }else{
-            // hide the counter view
-            txtCount.setVisibility(View.GONE);
-        }
          
         return convertView;
     }

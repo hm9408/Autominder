@@ -14,4 +14,7 @@
         <item >No hay elementos</item>
     </string-array>
         <string name="empty_vehicle_list">No vehicles found.</string>
+        <string name="km_actual">Kilometraje Actual</string>
+        <string name="km_semanales">Kilómetros semanales (aprox.)</string>
+        <string name="update">Actualizar</string>
 </resources>
