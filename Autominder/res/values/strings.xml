@@ -10,4 +10,8 @@
     <string name="you_have">¡Tienes</string>
     <string name="reminders_due">mantenimientos para hoy!</string>
     <string name="maintenance_reminder_sub">Toca para ver</string>
+    <string-array name="empty_list">
+        <item >No hay elementos</item>
+    </string-array>
+        <string name="empty_vehicle_list">No vehicles found.</string>
 </resources>
