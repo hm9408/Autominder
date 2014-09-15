@@ -7,6 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.io.StreamCorruptedException;
 import java.util.ArrayList;
 
@@ -22,7 +23,9 @@ import org.xml.sax.SAXException;
 
 import android.content.Context;
 
-public class Principal {
+public class Principal implements Serializable{
+
+	private static final long serialVersionUID = -6075841863258107180L;
 
 	public static final String file = "Autominder.dat";
 
@@ -32,6 +35,8 @@ public class Principal {
 
 	private ArrayList<Vehicle> vehiculos;
 	private ArrayList<Maintenance> mantenimientos;
+	
+	private Vehicle selected;
 
 	public Principal(Context context) {
 
@@ -44,7 +49,7 @@ public class Principal {
 			mantenimientos = cargarMantenimientosIniciales();
 			
 		}
-
+		
 	}
 
 	public ArrayList<Maintenance> cargarMantenimientosIniciales() {
@@ -94,12 +99,16 @@ public class Principal {
 	@SuppressWarnings("unchecked")
 	public void loadState(){
 		try {
-			FileInputStream fis = new FileInputStream(new File(file));
+			FileInputStream fis = c.openFileInput(file);
 			ObjectInputStream ois = new ObjectInputStream(fis);
 			vehiculos = (ArrayList<Vehicle>) ois.readObject();
+			System.out.println("cargados "+vehiculos.size()+" vehiculos");
 			mantenimientos = (ArrayList<Maintenance>) ois.readObject();
-			fis.close();
+			System.out.println("cargados "+mantenimientos.size()+" mantenimientos");
+			selected = vehiculos.get(0);
+			System.out.println("cargado selected: "+selected.getName());
 			ois.close();
+			fis.close();
 		} catch (StreamCorruptedException e1) {
 			System.out.println("StreamCorruptedException");
 			e1.printStackTrace();
@@ -142,7 +151,7 @@ public class Principal {
 
 	public void saveState(){
 		try {
-			FileOutputStream fos = c.openFileOutput(file, Context.MODE_PRIVATE);
+			FileOutputStream fos = c.openFileOutput(file, c.MODE_PRIVATE);
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(vehiculos);
 			oos.writeObject(mantenimientos);
@@ -173,5 +182,13 @@ public class Principal {
 		saveState();
 		return true;
 		
+	}
+
+	public Vehicle getSelected() {
+		return selected;
+	}
+
+	public void setSelected(Vehicle selected) {
+		this.selected = selected;
 	}
 }

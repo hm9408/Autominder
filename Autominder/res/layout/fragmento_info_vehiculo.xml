@@ -18,8 +18,8 @@
         android:id="@+id/txtKmActualVal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Medium Text"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:text="999999"
+        android:textSize="60sp"/>
 
     <TextView
         android:id="@+id/txtKmSemanales"
@@ -28,15 +28,12 @@
         android:text="@string/km_semanales"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <EditText
-        android:id="@+id/editKmSemanales"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/TextKmSemanales"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="5"
-        android:inputType="number" >
-
-        <requestFocus />
-    </EditText>
+        android:text="999999"
+        android:textSize="60sp" />
 
     <Button
         android:id="@+id/butUpdateWeeklyKm"

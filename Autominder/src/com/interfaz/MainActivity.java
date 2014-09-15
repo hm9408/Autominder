@@ -28,6 +28,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.autominder.NotificationService;
 import com.autominder.Principal;
 import com.autominder.R;
 import com.autominder.Reminder;
@@ -40,7 +41,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
-	private Vehicle selected;
 
 	// nav drawer title
 	private CharSequence mDrawerTitle;
@@ -76,7 +76,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		instancia = Principal.darInstancia(this);
 		if (instancia.getVehiculos().isEmpty()) {
 			Intent i = new Intent(this, AddVehicleActivity.class);
-			startActivity(i);
+			startActivityForResult(i, 666);
 		}
 		alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
 
@@ -147,7 +147,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 				R.string.app_name // nav drawer close - description for accessibility
 				){
 			public void onDrawerClosed(View view) {
-				getActionBar().setTitle(mTitle);
+				if (instancia.getSelected() != null) {
+					getActionBar().setTitle(instancia.getSelected().getName());
+				}else{
+					getActionBar().setTitle(mDrawerTitle);
+				}
+
 				// calling onPrepareOptionsMenu() to show action bar icons
 				invalidateOptionsMenu();
 			}
@@ -196,8 +201,20 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 				reminderDates.add(r.getFecha());
 			}
 		}
-
+		
 	}
+
+	protected void onActivityResult(int requestCode, int resultCode,
+			Intent data) {
+		if(requestCode == 666){
+			if(resultCode == RESULT_OK){
+				adapter.notifyDataSetChanged();
+				instancia.setSelected(instancia.getVehiculos().get(instancia.getVehiculos().size()-1));
+				getActionBar().setTitle(instancia.getSelected().getName());
+			}
+		}
+	}
+
 	/**
 	 * Slide menu item click listener
 	 * */
@@ -206,7 +223,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
 				long id) {
-			selected = instancia.getVehiculos().get(position); //sets selected vehicle
+			instancia.setSelected(instancia.getVehiculos().get(position)); //sets selected vehicle
+			getActionBar().setTitle(instancia.getSelected().getName());
+			mViewPager.setAdapter(mSectionsPagerAdapter);
+			getActionBar().setSelectedNavigationItem(0);
+			mDrawerLayout.closeDrawers();
 		}
 	}
 
@@ -232,12 +253,23 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		// automatically handle clicks on the Home/Up button, so long
 		// as you specify a parent activity in AndroidManifest.xml.
 		int id = item.getItemId();
-		if (id == R.id.add_vehicle) {
+		switch(id){
+		case(R.id.add_vehicle):
 			Intent i = new Intent(this, AddVehicleActivity.class);
-			startActivity(i);
+			startActivityForResult(i, 666);
 			return true;
+		case android.R.id.home:
+	        if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
+	            mDrawerLayout.closeDrawer(mDrawerList);
+	        }
+	        else {
+	            mDrawerLayout.openDrawer(mDrawerList);
+	        }
+	        return true;
+		default:
+			return super.onOptionsItemSelected(item);
 		}
-		return super.onOptionsItemSelected(item);
+		
 	}
 
 	@Override
@@ -269,9 +301,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		public SectionsPagerAdapter(FragmentManager fm) {
 			super(fm);
 			fragments = new ArrayList<Fragment>();
-			fragments.add( new FragmentoRecords(selected));
-			fragments.add( new FragmentoInfoVehiculo(selected));
-			fragments.add( new FragmentoReminders(selected));
+			fragments.add( new FragmentoRecords());
+			fragments.add( new FragmentoInfoVehiculo());
+			fragments.add( new FragmentoReminders());
 		}
 
 		@Override

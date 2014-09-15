@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">Autominder</string>
-    <string name="title_section1">Hugo</string>
-    <string name="title_section2">es</string>
-    <string name="title_section3">putazo</string>
+    <string name="title_section1">Historial</string>
+    <string name="title_section2">Info</string>
+    <string name="title_section3">Recordatorios</string>
     <string name="action_settings">Settings</string>
     <string name="service_description">notification service for when a car needs maintenance</string>
     <string name="you_have">¡Tienes</string>

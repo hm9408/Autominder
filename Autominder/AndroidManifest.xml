@@ -22,7 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:description="@string/service_description" android:icon="@drawable/ic_launcher" android:name="AutominderNotification"></service>
+        <service android:description="@string/service_description" android:icon="@drawable/ic_launcher" android:name=".NotificationService"></service>
         <activity android:name="com.interfaz.AddVehicleActivity"></activity>
     </application>
 

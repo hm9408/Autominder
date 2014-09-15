@@ -1,11 +1,13 @@
 package com.autominder;
 
 import android.annotation.SuppressLint;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 public class Vehicle implements Serializable{
 
@@ -125,7 +127,7 @@ public class Vehicle implements Serializable{
 	 */
 	@SuppressLint("SimpleDateFormat") 
 	public int getCurrentKmCount() {
-		SimpleDateFormat df = new SimpleDateFormat("dd-MMM-YYYY");
+		SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");
 		try {
 			if(new Date().getTime()>df.parse(df.format(lastDayChecked)).getTime()+24*60*60*1000)//si es al menos el siguiente dia a la ultima vez
 			{

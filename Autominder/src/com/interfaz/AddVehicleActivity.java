@@ -1,6 +1,7 @@
 package com.interfaz;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import com.autominder.Maintenance;
 import com.autominder.Principal;
@@ -16,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class AddVehicleActivity extends Activity {
@@ -47,6 +49,8 @@ public class AddVehicleActivity extends Activity {
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_vehicle_activity);
+		
+		setResult(RESULT_CANCELED);
 		
 		getActionBar().setTitle("Agregar vehículo");
 
@@ -106,7 +110,7 @@ public class AddVehicleActivity extends Activity {
 					if(cb1.isChecked()){
 						try {
 							int vKm1 = Integer.parseInt(km1.getText().toString());
-							Record rec = new Record(-1, "Taller desconocido", vKm1, a.get(0).getNombre(), null);
+							Record rec = new Record(-1, "Taller desconocido", vKm1, a.get(0).getNombre(), new Date());
 							r.add(rec);
 						} catch (NumberFormatException e) {
 							showDialog("Kilometraje de registro inválido", "Por favor, ingresa hace cuántos kilometros realizaste el mantenimiento '"+a.get(0).getNombre()+"'");
@@ -118,7 +122,7 @@ public class AddVehicleActivity extends Activity {
 					if(cb2.isChecked()){
 						try {
 							int vKm2 = Integer.parseInt(km2.getText().toString());
-							Record rec = new Record(-1, "Taller desconocido", vKm2, a.get(1).getNombre(), null);
+							Record rec = new Record(-1, "Taller desconocido", vKm2, a.get(1).getNombre(), new Date());
 							r.add(rec);
 						} catch (NumberFormatException e) {
 							showDialog("Kilometraje de registro inválido", "Por favor, ingresa hace cuántos kilometros realizaste el mantenimiento '"+a.get(1).getNombre()+"'");
@@ -130,7 +134,7 @@ public class AddVehicleActivity extends Activity {
 					if(cb3.isChecked()){
 						try {
 							int vKm3 = Integer.parseInt(km3.getText().toString());
-							Record rec = new Record(-1, "Taller desconocido", vKm3, a.get(2).getNombre(), null);
+							Record rec = new Record(-1, "Taller desconocido", vKm3, a.get(2).getNombre(), new Date());
 							r.add(rec);
 						} catch (NumberFormatException e) {
 							showDialog("Kilometraje de registro inválido", "Por favor, ingresa hace cuántos kilometros realizaste el mantenimiento '"+a.get(2).getNombre()+"'");
@@ -144,6 +148,9 @@ public class AddVehicleActivity extends Activity {
 					Vehicle v = new Vehicle(vName, vWeeklyKM, vCurrentKmCount, a, r);
 					if(!instancia.addVehicle(v)){
 						showDialog("Vehiculo existente", "Ya existe un vehiculo con el nombre ingresado, prueba con otro");
+					}else{
+						setResult(RESULT_OK);
+						finish();
 					}
 				}catch(NumberFormatException e){
 					showDialog("Kilometraje semanal inválido", "El kilometraje semanal ingresado es inválido");

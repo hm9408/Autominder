@@ -1,20 +1,19 @@
 package com.interfaz;
 
+import com.autominder.Principal;
 import com.autominder.R;
-import com.autominder.R.id;
-import com.autominder.R.layout;
-import com.autominder.Vehicle;
 
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class FragmentoRecords extends Fragment {
 
-	public FragmentoRecords(Vehicle selected) {
+	public FragmentoRecords() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -23,8 +22,15 @@ public class FragmentoRecords extends Fragment {
 
 		View v = inflater.inflate(R.layout.fragmento_home, container, false);
 
-		TextView messageTextView = (TextView)v.findViewById(R.id.textViewHome);
-		messageTextView.setText("La puta vista de HOME");
+		ListView list = (ListView)v.findViewById(R.id.record_list);
+		TextView empty = new TextView(getActivity());
+		empty.setText("No hay records");
+		list.setEmptyView(empty);
+
+		// setting the nav drawer list adapter
+		Principal p = Principal.darInstancia(getActivity());
+		RecordListAdapter adapter = new RecordListAdapter(getActivity(),p.getSelected().getRecords());
+		list.setAdapter(adapter);
 
 		return v;
 
