@@ -164,7 +164,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
-
+		if (instancia.getSelected()==null) {
+			getActionBar().setTitle(R.string.app_name);
+		}
+		else
+		{
+			getActionBar().setTitle(instancia.getSelected().getName());
+		}
 		//if (savedInstanceState == null) {
 		// on first time display view for first nav item
 		//displayView(0);

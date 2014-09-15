@@ -153,7 +153,6 @@ public class Vehicle implements Serializable{
 			e.printStackTrace();
 			return 999999;
 		}
-
 	}
 
 	/**
@@ -173,11 +172,21 @@ public class Vehicle implements Serializable{
 		}
 		calcularRecordatorios();
 	}
-
-	public void addNewMaintenance(Maintenance m, Record r){
-		maintenances.add(m);
-		records.add(r);
-		calcularRecordatorios();
+	
+	public boolean addNewMaintenance(Maintenance m, Record r){
+		boolean noExiste = true;
+		for (int i = 0; i < maintenances.size() && noExiste ; i++) {
+			if (maintenances.get(i).getNombre().equals(m.getNombre())) {
+				noExiste=true;
+			}
+		}
+		if (noExiste) {
+			maintenances.add(m);
+			records.add(r);
+			calcularRecordatorios();
+			return true;
+		}
+		return false;
 	}
 
 }

@@ -192,4 +192,10 @@ public class Principal implements Serializable{
 	public void setSelected(Vehicle selected) {
 		this.selected = selected;
 	}
+	
+	public boolean addMaintenanceSelected(Maintenance m, Record r){
+		boolean a = selected.addNewMaintenance(m, r);
+		saveState();
+		return a;
+	}
 }
