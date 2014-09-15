@@ -28,9 +28,9 @@ public class FragmentoInfoVehiculo extends Fragment implements OnClickListener {
 	private TextView kmCount;
 	private TextView weeklyKm;
 	private Button update;
-	
+
 	Principal instancia;
-	
+
 	public FragmentoInfoVehiculo() {
 	}
 
@@ -38,7 +38,7 @@ public class FragmentoInfoVehiculo extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View v = inflater.inflate(R.layout.fragmento_info_vehiculo, container, false);
-		
+
 		instancia = Principal.darInstancia(getActivity());
 		selected = instancia.getSelected();
 		if (selected != null) {
@@ -64,9 +64,9 @@ public class FragmentoInfoVehiculo extends Fragment implements OnClickListener {
 			kmCount.setText(""+selected.getCurrentKmCount());
 			weeklyKm.setText(""+selected.getWeeklyKM());
 		}
-		
+
 	}
-	
+
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -75,6 +75,17 @@ public class FragmentoInfoVehiculo extends Fragment implements OnClickListener {
 			startActivityForResult(i, 777);
 			break;
 		}
-		
+
+	}
+
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == 777){
+			if(resultCode == getActivity().RESULT_OK){
+				getActivity().getActionBar().setTitle(instancia.getSelected().getName());
+				//la siguiente linea funciona
+				//Toast.makeText(getActivity(), "Volvio al FragmentoInfoVehiculo!", Toast.LENGTH_SHORT).show();
+			}
+		}
 	}
 }

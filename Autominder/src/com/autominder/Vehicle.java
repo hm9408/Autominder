@@ -174,4 +174,10 @@ public class Vehicle implements Serializable{
 		calcularRecordatorios();
 	}
 
+	public void addNewMaintenance(Maintenance m, Record r){
+		maintenances.add(m);
+		records.add(r);
+		calcularRecordatorios();
+	}
+
 }
