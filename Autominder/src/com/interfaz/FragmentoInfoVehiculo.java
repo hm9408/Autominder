@@ -31,12 +31,14 @@ public class FragmentoInfoVehiculo extends Fragment implements OnClickListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
 		View v = inflater.inflate(R.layout.fragmento_info_vehiculo, container, false);
-		kmCount = (TextView)v.findViewById(R.id.txtKmActualVal);
-		kmCount.setText(selected.getCurrentKmCount());
-		weeklyKm = (EditText)v.findViewById(R.id.editKmSemanales);
-		weeklyKm.setText(selected.getWeeklyKM());
-		update = (Button)v.findViewById(R.id.butUpdateWeeklyKm);
-		update.setOnClickListener(this);
+		if (selected != null) {
+			kmCount = (TextView) v.findViewById(R.id.txtKmActualVal);
+			kmCount.setText(selected.getCurrentKmCount());
+			weeklyKm = (EditText) v.findViewById(R.id.editKmSemanales);
+			weeklyKm.setText(selected.getWeeklyKM());
+			update = (Button) v.findViewById(R.id.butUpdateWeeklyKm);
+			update.setOnClickListener(this);
+		}
 		return v;
 
 	}

@@ -47,6 +47,8 @@ public class AddVehicleActivity extends Activity {
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_vehicle_activity);
+		
+		getActionBar().setTitle("Agregar vehículo");
 
 		instancia = Principal.darInstancia(getApplicationContext());
 
@@ -59,6 +61,13 @@ public class AddVehicleActivity extends Activity {
 		cb3 = (CheckBox)findViewById(R.id.checkBox3);
 
 		a = instancia.cargarMantenimientosIniciales();
+		System.out.println("Tamaño inicial de a:"+a.size());
+		while(a.size()>=4) {
+			a.remove(3);
+			System.out.println("se remueve uno" );
+		}
+		System.out.println("Tamaño final de a: "+a.size());
+		
 		maintenance1 = (TextView)findViewById(R.id.default_maintenance1);
 		maintenance1.setText(a.get(0).getNombre());
 		maintenance2 = (TextView)findViewById(R.id.default_maintenance2);
@@ -83,7 +92,7 @@ public class AddVehicleActivity extends Activity {
 		km3.setEnabled(((CheckBox) checkBox).isChecked());
 	}
 
-	public void tryAddVehicle(){
+	public void tryAddVehicle(View view){
 		String vName = name.getText().toString();
 		if(vName == null || vName.trim().equals("")){
 			showDialog("Nombre inválido", "El nombre de vehiculo ingresado es inválido");
@@ -121,7 +130,7 @@ public class AddVehicleActivity extends Activity {
 					if(cb3.isChecked()){
 						try {
 							int vKm3 = Integer.parseInt(km3.getText().toString());
-							Record rec = new Record(-1, "Taller desconocido", vKm3, a.get(0).getNombre(), null);
+							Record rec = new Record(-1, "Taller desconocido", vKm3, a.get(2).getNombre(), null);
 							r.add(rec);
 						} catch (NumberFormatException e) {
 							showDialog("Kilometraje de registro inválido", "Por favor, ingresa hace cuántos kilometros realizaste el mantenimiento '"+a.get(2).getNombre()+"'");
@@ -130,6 +139,8 @@ public class AddVehicleActivity extends Activity {
 						a.remove(2);
 					}
 					
+					System.out.println("NUmero de mantenimientos:"+a.size());
+					System.out.println("NUmero de records:"+r.size());
 					Vehicle v = new Vehicle(vName, vWeeklyKM, vCurrentKmCount, a, r);
 					if(!instancia.addVehicle(v)){
 						showDialog("Vehiculo existente", "Ya existe un vehiculo con el nombre ingresado, prueba con otro");

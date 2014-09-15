@@ -41,8 +41,8 @@ public class Principal {
 			vehiculos = new ArrayList<Vehicle>();
 		}
 		if (mantenimientos==null) {
-			mantenimientos = new ArrayList<Maintenance>();
-			cargarMantenimientosIniciales();
+			mantenimientos = cargarMantenimientosIniciales();
+			
 		}
 
 	}

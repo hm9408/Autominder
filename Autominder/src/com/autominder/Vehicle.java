@@ -88,6 +88,8 @@ public class Vehicle implements Serializable{
 		ArrayList<Reminder> brandNewReminders = new ArrayList<Reminder>();
 		for(int i = 0; i<maintenances.size(); i++){
 			Maintenance m = maintenances.get(i);
+			System.out.println("mantenimiento: "+m.getNombre());
+			System.out.println("record: "+darRecordPorMantenimiento(m.getNombre()));
 			if(m.getType() == Maintenance.SEGUN_KM){
 				int kmsUntilNext = m.getKm() - darRecordPorMantenimiento(m.getNombre()).getKmPassedSince();
 				int daysUntilNext = 7*kmsUntilNext/weeklyKM;
@@ -112,7 +114,7 @@ public class Vehicle implements Serializable{
 	private Record darRecordPorMantenimiento(String nombre) {
 		for (int i = 0; i < records.size(); i++) {
 			Record r = records.get(i);
-			if(r.getMaintenanceName().equals(nombre))return r;
+			if(r.getMaintenanceName().equalsIgnoreCase(nombre))return r;
 		}
 		return null;
 	}
