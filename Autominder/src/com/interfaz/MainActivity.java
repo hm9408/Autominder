@@ -11,6 +11,8 @@ import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -27,6 +29,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.autominder.NotificationService;
 import com.autominder.Principal;
@@ -175,6 +178,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		// on first time display view for first nav item
 		//displayView(0);
 		//}
+		
+		Notification noti = new Notification.Builder(this)
+		.setContentTitle("Notificacion test")
+		.setContentText("test")
+		.setSmallIcon(R.drawable.ic_launcher)
+		.build();
+		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		notificationManager.notify(0, noti);
 
 	}
 
@@ -199,15 +210,27 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		 * recordatorio respectivo no esta ya en el arreglo, finalmente se agrega la
 		 * fecha. Esto con el fin de evitar mas de una alarma/notificacion en el mismo dia.
 		 */
-		ArrayList<Date> reminderDates = new ArrayList<Date>();
+//		ArrayList<Date> reminderDates = new ArrayList<Date>();
+//		for (int i = 0; i < allReminders.size(); i++) {
+//			Reminder r = allReminders.get(i);
+//			if(!reminderDates.contains(r.getFecha())){
+//				alarmManager.set(AlarmManager.RTC_WAKEUP, r.getFecha().getTime(), pendingIntent);
+//				reminderDates.add(r.getFecha());
+//			}
+//		}
+		/**
+		 * Se busca el reminder mas atrasado y se crea una unica alarma
+		 */
+		Reminder earliest = null;
 		for (int i = 0; i < allReminders.size(); i++) {
 			Reminder r = allReminders.get(i);
-			if(!reminderDates.contains(r.getFecha())){
-				alarmManager.set(AlarmManager.RTC_WAKEUP, r.getFecha().getTime(), pendingIntent);
-				reminderDates.add(r.getFecha());
+			if(earliest == null || r.getFecha().getTime()<earliest.getFecha().getTime()){
+				earliest = r;
 			}
+			
 		}
-		
+		alarmManager.setExact(AlarmManager.RTC_WAKEUP, earliest.getFecha().getTime(), pendingIntent);
+		Toast.makeText(this, "alarma creada", Toast.LENGTH_SHORT).show();
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode,
