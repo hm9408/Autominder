@@ -1,13 +1,6 @@
 package com.interfaz;
 
 import java.util.ArrayList;
-import java.util.Date;
-
-import com.autominder.Maintenance;
-import com.autominder.Principal;
-import com.autominder.R;
-import com.autominder.Record;
-import com.autominder.Vehicle;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -19,15 +12,15 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
-import android.widget.TextView;
+
+import com.autominder.Maintenance;
+import com.autominder.Principal;
+import com.autominder.R;
 
 public class AddMaintenanceActivity extends Activity {
 
@@ -79,8 +72,12 @@ public class AddMaintenanceActivity extends Activity {
 			@Override
 			public void onItemSelected(AdapterView<?> parent, View view,
 					int position, long id) {
-				if (spinNames.getItemAtPosition(position).toString().equals("Personalizado")) {
+				if (spinNames.getItemAtPosition(position).toString().equals("Personalizado...")) {
 					editCustomName.setEnabled(true);
+				}
+				else if(!spinNames.getItemAtPosition(position).toString().equals("Personalizado..."))
+				{
+					editCustomName.setEnabled(false);
 				}
 			}
 			@Override
@@ -96,18 +93,20 @@ public class AddMaintenanceActivity extends Activity {
 		ArrayAdapter<String> spinnerArrayAdapterPeriod = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, periods); //selected item will look like a spinner set from XML
 		spinnerArrayAdapterPeriod.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		spinPeriod.setAdapter(spinnerArrayAdapterPeriod);
-		
+		spinPeriod.setEnabled(false);
 		
 		
 		butGroup.setOnCheckedChangeListener(new OnCheckedChangeListener(){
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch(checkedId){
                     case R.id.radio0:
-                        spinNames.setEnabled(false);
+                        spinPeriod.setEnabled(false);
+                        editKM.setEnabled(true);
                     break;
 
                     case R.id.radio1:
                     	editKM.setEnabled(false);
+                    	spinPeriod.setEnabled(true);
                     break;
                 }
             }
@@ -122,13 +121,15 @@ public class AddMaintenanceActivity extends Activity {
 	}
 
 	public void tryAddMaintenance() {
-		if (por_km.isSelected()) {
+		System.out.println("Entró a guardar el nuevo mantenimiento");
+		if (butGroup.getCheckedRadioButtonId()==R.id.radio0) {
 			if (editKM.getText().toString().trim().equals("")||
 					(editCustomName.isEnabled() && editCustomName.getText().toString().trim().equals(""))) {
 				showDialog("Campos inválidos", "Algún campo se encuentra vacío, por favor ingresa valores.");
 			}
 			else if(editCustomName.isEnabled() && !editCustomName.getText().toString().trim().equals(""))
 			{
+				System.out.println("Entró, es por km, tiene custom name y no es vacío");
 				instancia.agregarMantenimiento(editCustomName.getText().toString(), 
 						getSelectedRadioButton(), 
 						Integer.parseInt(editKM.getText().toString()), 
@@ -138,6 +139,7 @@ public class AddMaintenanceActivity extends Activity {
 			}
 			else if(!editCustomName.isEnabled())
 			{
+				System.out.println("Entró, es por km, tiene name cargado y no es vacío");
 				instancia.agregarMantenimiento(spinNames.getSelectedItem().toString(), 
 						getSelectedRadioButton(), 
 						Integer.parseInt(editKM.getText().toString()), 
@@ -146,12 +148,13 @@ public class AddMaintenanceActivity extends Activity {
 				finish();
 			}				
 		}
-		else if (por_tiempo.isSelected()) {
+		else if (butGroup.getCheckedRadioButtonId()==R.id.radio1) {
 			if (editCustomName.isEnabled() && editCustomName.getText().toString().trim().equals("")) {
 				showDialog("Campos inválidos", "Algún campo se encuentra vacío, por favor ingresa valores.");
 			}
 			else if(editCustomName.isEnabled() && !editCustomName.getText().toString().trim().equals(""))
 			{
+				System.out.println("Entró, es por tiempo, tiene custom name y no es vacío");
 				instancia.agregarMantenimiento(editCustomName.getText().toString(), 
 						getSelectedRadioButton(), 
 						Integer.parseInt(editKM.getText().toString()), 
@@ -161,6 +164,7 @@ public class AddMaintenanceActivity extends Activity {
 			}
 			else if(!editCustomName.isEnabled())
 			{
+				System.out.println("Entró, es por tiempo, tiene name cargado y no es vacío");
 				instancia.agregarMantenimiento(spinNames.getSelectedItem().toString(), 
 						getSelectedRadioButton(), 
 						Integer.parseInt(editKM.getText().toString()), 

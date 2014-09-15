@@ -71,8 +71,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="left"
             android:hint="KMs"
-            android:inputType="number"
-            android:text="EditText" />
+            android:inputType="number" />
 
         <Spinner
             android:id="@+id/spinPeriod"

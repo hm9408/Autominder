@@ -137,6 +137,7 @@ public class Principal implements Serializable{
 	public void agregarMantenimiento(String nombre, int tipo, int km, long tiempo){
 		Maintenance m = new Maintenance(tipo, nombre, km, tiempo);
 		mantenimientos.add(m);
+		saveState();
 	}
 
 
