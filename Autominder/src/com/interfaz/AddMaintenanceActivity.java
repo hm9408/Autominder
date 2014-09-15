@@ -1,6 +1,7 @@
 package com.interfaz;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -15,12 +16,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Toast;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.Spinner;
 
 import com.autominder.Maintenance;
 import com.autominder.Principal;
 import com.autominder.R;
+import com.autominder.Record;
 
 public class AddMaintenanceActivity extends Activity {
 
@@ -38,6 +41,8 @@ public class AddMaintenanceActivity extends Activity {
 	private Button butAdd;
 
 	private Spinner spinPeriod;
+
+	private EditText editLastTime;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -62,6 +67,7 @@ public class AddMaintenanceActivity extends Activity {
 		editCustomName=(EditText)findViewById(R.id.editCustomName);
 		editCustomName.setEnabled(false);
 		editKM = (EditText)findViewById(R.id.editKM);
+		editLastTime = (EditText)findViewById(R.id.editLastTime);
 		butAdd = (Button)findViewById(R.id.butAddMaint);
 		
 		spinNames = (Spinner)findViewById(R.id.spinMaintNames);
@@ -77,6 +83,15 @@ public class AddMaintenanceActivity extends Activity {
 				}
 				else if(!spinNames.getItemAtPosition(position).toString().equals("Personalizado..."))
 				{
+					if (a.get(position).getType()==1) {
+						por_km.setChecked(true);
+						editKM.setText(""+a.get(position).getKm());
+						editKM.setEnabled(false);
+					}
+					else if(a.get(position).getType()==2){
+						por_tiempo.setChecked(true);
+						editKM.setText("");
+					}
 					editCustomName.setEnabled(false);
 				}
 			}
@@ -122,8 +137,8 @@ public class AddMaintenanceActivity extends Activity {
 
 	public void tryAddMaintenance() {
 		System.out.println("Entró a guardar el nuevo mantenimiento");
-		if (butGroup.getCheckedRadioButtonId()==R.id.radio0) {
-			if (editKM.getText().toString().trim().equals("")||
+		if (butGroup.getCheckedRadioButtonId()==R.id.radio0) { //por_km
+			if (editLastTime.getText().toString().trim().equals("")||editKM.getText().toString().trim().equals("")||
 					(editCustomName.isEnabled() && editCustomName.getText().toString().trim().equals(""))) {
 				showDialog("Campos inválidos", "Algún campo se encuentra vacío, por favor ingresa valores.");
 			}
@@ -134,6 +149,12 @@ public class AddMaintenanceActivity extends Activity {
 						getSelectedRadioButton(), 
 						Integer.parseInt(editKM.getText().toString()), 
 						getTime());
+				Maintenance a = instancia.getMantenimientos().get(instancia.getMantenimientos().size()-1); //el recien agregado
+				instancia.addMaintenanceSelected(a, 
+						new Record(-1, "Taller desconocido", 
+								Integer.parseInt(editLastTime.getText().toString()), 
+								a.getNombre(), 
+								new Date()));
 				setResult(RESULT_OK);
 				finish();
 			}
@@ -144,12 +165,18 @@ public class AddMaintenanceActivity extends Activity {
 						getSelectedRadioButton(), 
 						Integer.parseInt(editKM.getText().toString()), 
 						getTime());
+				Maintenance a = instancia.getMantenimientos().get(instancia.getMantenimientos().size()-1); //el recien agregado
+				boolean added= instancia.addMaintenanceSelected(a, 
+						new Record(-1, "Taller desconocido", 
+								Integer.parseInt(editLastTime.getText().toString()), 
+								a.getNombre(), 
+								new Date()));
 				setResult(RESULT_OK);
 				finish();
 			}				
 		}
-		else if (butGroup.getCheckedRadioButtonId()==R.id.radio1) {
-			if (editCustomName.isEnabled() && editCustomName.getText().toString().trim().equals("")) {
+		else if (butGroup.getCheckedRadioButtonId()==R.id.radio1) { //por_tiempo
+			if (editLastTime.getText().toString().trim().equals("")||editCustomName.isEnabled() && editCustomName.getText().toString().trim().equals("")) {
 				showDialog("Campos inválidos", "Algún campo se encuentra vacío, por favor ingresa valores.");
 			}
 			else if(editCustomName.isEnabled() && !editCustomName.getText().toString().trim().equals(""))
@@ -159,6 +186,12 @@ public class AddMaintenanceActivity extends Activity {
 						getSelectedRadioButton(), 
 						Integer.parseInt(editKM.getText().toString()), 
 						getTime());
+				Maintenance a = instancia.getMantenimientos().get(instancia.getMantenimientos().size()-1); //el recien agregado
+				instancia.addMaintenanceSelected(a, 
+						new Record(-1, "Taller desconocido", 
+								Integer.parseInt(editLastTime.getText().toString()), 
+								a.getNombre(), 
+								new Date()));
 				setResult(RESULT_OK);
 				finish();
 			}
@@ -169,6 +202,12 @@ public class AddMaintenanceActivity extends Activity {
 						getSelectedRadioButton(), 
 						Integer.parseInt(editKM.getText().toString()), 
 						getTime());
+				Maintenance a = instancia.getMantenimientos().get(instancia.getMantenimientos().size()-1); //el recien agregado
+				instancia.addMaintenanceSelected(a, 
+						new Record(-1, "Taller desconocido", 
+								Integer.parseInt(editLastTime.getText().toString()), 
+								a.getNombre(), 
+								new Date()));
 				setResult(RESULT_OK);
 				finish();
 			}

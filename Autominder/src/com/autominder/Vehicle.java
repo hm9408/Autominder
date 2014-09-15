@@ -153,7 +153,6 @@ public class Vehicle implements Serializable{
 			e.printStackTrace();
 			return 999999;
 		}
-
 	}
 
 	/**
@@ -174,16 +173,6 @@ public class Vehicle implements Serializable{
 		calcularRecordatorios();
 	}
 	
-	/**
-	 * Este metodo no revisa si el maintenance ya existe
-	 * @param m el manetnimiento a agregar
-	 * @param r el record asociado. r.nombre()=m.nombre()
-	 */
-	public void addNewMaintenance(Maintenance m, Record r){
-		maintenances.add(m);
-		records.add(r);
-		calcularRecordatorios();
-	}
 
 	public void addNewRecord(Record r) {
 		boolean finished = false;
@@ -197,5 +186,20 @@ public class Vehicle implements Serializable{
 		}
 		calcularRecordatorios();
 	} 
+	public boolean addNewMaintenance(Maintenance m, Record r){
+		boolean noExiste = true;
+		for (int i = 0; i < maintenances.size() && noExiste ; i++) {
+			if (maintenances.get(i).getNombre().equals(m.getNombre())) {
+				noExiste=true;
+			}
+		}
+		if (noExiste) {
+			maintenances.add(m);
+			records.add(r);
+			calcularRecordatorios();
+			return true;
+		}
+		return false;
+	}
 
 }
