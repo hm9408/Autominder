@@ -26,6 +26,7 @@
         <activity android:name="com.interfaz.AddVehicleActivity"></activity>
         <activity android:name="com.interfaz.EditVehicleActivity"></activity>
         <activity android:name="com.interfaz.AddMaintenanceActivity"></activity>
+        <activity android:name="com.interfaz.newRecordActivity"></activity>
     </application>
 
 </manifest>

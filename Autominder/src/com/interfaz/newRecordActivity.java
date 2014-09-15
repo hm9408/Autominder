@@ -2,6 +2,7 @@ package com.interfaz;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -10,15 +11,18 @@ import com.autominder.Principal;
 import com.autominder.R;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.app.FragmentManager;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-public class newRecordActivity extends FragmentActivity {
+public class newRecordActivity extends Activity implements OnDateSetListener{
 
 	Principal instancia;
 
@@ -65,8 +69,19 @@ public class newRecordActivity extends FragmentActivity {
 	}
 	
 	public void showDatePickerDialog(View view){
-		dpf = new DatePickerFragment();
-	    dpf.show(getFragmentManager(), "datePicker");
-	    newRecordDate.setText(new SimpleDateFormat("dd-MMM-yyyy").format(dpf.getDate()));
+		Calendar c = Calendar.getInstance();
+		int year = c.get(Calendar.YEAR);
+		int month = c.get(Calendar.MONTH);
+		int day = c.get(Calendar.DAY_OF_MONTH);
+		DatePickerDialog dpd = new DatePickerDialog(this, this, year, month, day);
+		dpd.show();
+
+	}
+
+	@Override
+	public void onDateSet(DatePicker view, int year, int monthOfYear,
+			int dayOfMonth) {
+		newRecordDate.setText(dayOfMonth+"-"+(monthOfYear+1)+"-"+year);
+		
 	}
 }

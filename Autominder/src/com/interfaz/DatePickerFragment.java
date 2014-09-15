@@ -23,7 +23,8 @@ implements DatePickerDialog.OnDateSetListener {
 		int year = c.get(Calendar.YEAR);
 		int month = c.get(Calendar.MONTH);
 		int day = c.get(Calendar.DAY_OF_MONTH);
-
+		
+		d = new Date();
 		// Create a new instance of DatePickerDialog and return it
 		return new DatePickerDialog(getActivity(), this, year, month, day);
 	}
@@ -31,6 +32,7 @@ implements DatePickerDialog.OnDateSetListener {
 	public Date getDate(){
 		return d;
 	}
+	
 	@Override
 	public void onDateSet(DatePicker view, int year, int monthOfYear,
 			int dayOfMonth) {
