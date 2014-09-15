@@ -25,8 +25,10 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,7 +39,7 @@ import com.autominder.R;
 import com.autominder.Reminder;
 import com.autominder.Vehicle;
 
-public class MainActivity extends Activity implements ActionBar.TabListener{
+public class MainActivity extends Activity implements ActionBar.TabListener, OnClickListener{
 
 
 	private Principal instancia; 
@@ -69,6 +71,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
+	private Button butPendingMaint;
 
 
 
@@ -95,7 +98,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-
+		butPendingMaint = (Button) findViewById(R.id.butNavDrawer);
+		butPendingMaint.setOnClickListener(this);
 		// When swiping between different sections, select the corresponding
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
 		// a reference to the Tab.
@@ -366,5 +370,16 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.butNavDrawer:
+			Intent i = new Intent(this, PendingRemindersActivity.class);
+			startActivity(i);
+			break;
+		}
+		
 	}
 }

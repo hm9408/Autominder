@@ -8,12 +8,12 @@
     tools:context="com.interfaz.MainActivity" >
 
     <android.support.v4.view.ViewPager
-    	android:id="@+id/pager"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:id="@+id/pager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:background="#ffe6e1d4"
         android:focusable="true"
-        android:focusableInTouchMode="true" />    
+        android:focusableInTouchMode="true" />
 
     <ListView
         android:id="@+id/left_drawer"
@@ -39,5 +39,12 @@
         android:textSize="35sp"
         android:textStyle="bold"
         android:typeface="normal" />
+
+    <Button
+        android:id="@+id/butNavDrawer"
+        android:text="@string/pending_maint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal" />
 
 </android.support.v4.widget.DrawerLayout>
