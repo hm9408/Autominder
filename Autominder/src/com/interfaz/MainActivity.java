@@ -212,6 +212,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 				instancia.setSelected(instancia.getVehiculos().get(instancia.getVehiculos().size()-1));
 				getActionBar().setTitle(instancia.getSelected().getName());
 			}
+		}else if(requestCode == 777){
+			if(resultCode == RESULT_OK){
+				getActionBar().setTitle(instancia.getSelected().getName());
+			}
 		}
 	}
 

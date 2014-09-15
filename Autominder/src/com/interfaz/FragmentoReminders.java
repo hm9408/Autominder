@@ -16,8 +16,9 @@ import android.widget.TextView;
 
 public class FragmentoReminders extends Fragment {
 
-	
-	
+	ListView list;
+	Principal p;
+
 	public FragmentoReminders() {
 		// TODO Auto-generated constructor stub
 	}
@@ -27,17 +28,24 @@ public class FragmentoReminders extends Fragment {
 
 		View v = inflater.inflate(R.layout.fragmento_distancia, container, false);
 
-		ListView list = (ListView)v.findViewById(R.id.reminders_list);
+		list = (ListView)v.findViewById(R.id.reminders_list);
 		TextView empty = new TextView(getActivity());
 		empty.setText("No hay recordatorios");
 		list.setEmptyView(empty);
 
 		// setting the nav drawer list adapter
-		Principal p = Principal.darInstancia(getActivity());
+		p = Principal.darInstancia(getActivity());
 		ReminderListAdapter adapter = new ReminderListAdapter(getActivity(),p.getSelected().getReminders());
 		list.setAdapter(adapter);
-		
+
 		return v;
+
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		list.setAdapter(new ReminderListAdapter(getActivity(),p.getSelected().getReminders()));
 
 	}
 }

@@ -8,6 +8,7 @@ import com.autominder.Vehicle;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -70,7 +71,8 @@ public class FragmentoInfoVehiculo extends Fragment implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.butUpdateWeeklyKm:
-			Toast.makeText(getActivity(), "TODO nuevo dialogo changeWeeklyKm", Toast.LENGTH_SHORT).show();
+			Intent i = new Intent(getActivity(), EditVehicleActivity.class);
+			startActivityForResult(i, 777);
 			break;
 		}
 		

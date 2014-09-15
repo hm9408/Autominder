@@ -24,6 +24,7 @@
         </activity>
         <service android:description="@string/service_description" android:icon="@drawable/ic_launcher" android:name=".NotificationService"></service>
         <activity android:name="com.interfaz.AddVehicleActivity"></activity>
+        <activity android:name="com.interfaz.EditVehicleActivity"></activity>
     </application>
 
 </manifest>
