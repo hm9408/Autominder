@@ -145,12 +145,17 @@ public class AddVehicleActivity extends Activity {
 					
 					System.out.println("NUmero de mantenimientos:"+a.size());
 					System.out.println("NUmero de records:"+r.size());
-					Vehicle v = new Vehicle(vName, vWeeklyKM, vCurrentKmCount, a, r);
-					if(!instancia.addVehicle(v)){
-						showDialog("Vehiculo existente", "Ya existe un vehiculo con el nombre ingresado, prueba con otro");
+					
+					if(a.isEmpty()){
+						showDialog("Sin recordatorios", "Debes seleccionar al menos un recordatorios para tu vehiculo");
 					}else{
-						setResult(RESULT_OK);
-						finish();
+						Vehicle v = new Vehicle(vName, vWeeklyKM, vCurrentKmCount, a, r);
+						if(!instancia.addVehicle(v)){
+							showDialog("Vehiculo existente", "Ya existe un vehiculo con el nombre ingresado, prueba con otro");
+						}else{
+							setResult(RESULT_OK);
+							finish();
+						}
 					}
 				}catch(NumberFormatException e){
 					showDialog("Kilometraje semanal inválido", "El kilometraje semanal ingresado es inválido");

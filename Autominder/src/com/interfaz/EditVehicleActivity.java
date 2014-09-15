@@ -29,7 +29,7 @@ public class EditVehicleActivity extends Activity {
 		setResult(RESULT_CANCELED);
 		
 		instancia = Principal.darInstancia(getApplicationContext());
-		getActionBar().setTitle("Editar datos de '"+instancia.getSelected().getName()+"'");
+		getActionBar().setTitle("Editar datos - "+instancia.getSelected().getName());
 		
 		np=(NumberPicker)findViewById(R.id.NumberPicker01);
 		et = (EditText)findViewById(R.id.new_km);
@@ -72,7 +72,7 @@ public class EditVehicleActivity extends Activity {
 			};
 
 			AlertDialog.Builder builder = new AlertDialog.Builder(this);
-			builder.setMessage("¿Esta seguro? nuevos recordatorios seran generados").setPositiveButton("Si", dialogClickListener)
+			builder.setMessage("¿Estás seguro?\nNuevos recordatorios serán generados").setPositiveButton("Si", dialogClickListener)
 			    .setNegativeButton("No", dialogClickListener).show();
 			
 			

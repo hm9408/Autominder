@@ -4,14 +4,17 @@ import com.autominder.Principal;
 import com.autominder.R;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class FragmentoRecords extends Fragment {
+public class FragmentoRecords extends Fragment implements OnClickListener{
 
 	ListView list;
 	Principal p;
@@ -34,7 +37,10 @@ public class FragmentoRecords extends Fragment {
 		p = Principal.darInstancia(getActivity());
 		RecordListAdapter adapter = new RecordListAdapter(getActivity(),p.getSelected().getRecords());
 		list.setAdapter(adapter);
-
+		
+		Button b = (Button)v.findViewById(R.id.reg_mant);
+		b.setOnClickListener(this);
+		
 		return v;
 
 	}
@@ -44,5 +50,28 @@ public class FragmentoRecords extends Fragment {
 		super.onResume();
 		list.setAdapter(new RecordListAdapter(getActivity(),p.getSelected().getRecords()));
 
+	}
+	@Override
+	public void onClick(View v) {
+		
+		switch (v.getId()) {
+		case R.id.reg_mant:
+			Intent i = new Intent(getActivity(), newRecordActivity.class);
+			startActivityForResult(i, 888);
+			break;
+		}
+		
+	}
+
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == 888){
+			if(resultCode == getActivity().RESULT_OK){
+				getActivity().getActionBar().setTitle(p.getSelected().getName());
+				//la siguiente linea funciona
+				//Toast.makeText(getActivity(), "Volvio al FragmentoRecords!", Toast.LENGTH_SHORT).show();
+			}
+		}
 	}
 }
