@@ -134,7 +134,7 @@ public class Principal implements Serializable{
 		return instancia;
 	}
 
-	public void agregarMantenimiento(String nombre, int tipo, int km, int tiempo){
+	public void agregarMantenimiento(String nombre, int tipo, int km, long tiempo){
 		Maintenance m = new Maintenance(tipo, nombre, km, tiempo);
 		mantenimientos.add(m);
 	}

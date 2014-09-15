@@ -22,4 +22,8 @@
     <string name="km_actual">Kilometraje Actual</string>
     <string name="km_semanales">Kilómetros semanales (aprox.)</string>
     <string name="update">Actualizar</string>
+    <string name="maint_type">Tipo</string>
+    <string name="por_km">Por KM</string>
+    <string name="por_tiempo">Por Tiempo</string>
+    <string name="add_maintenance">Agregar Mantenimiento</string>
 </resources>   
