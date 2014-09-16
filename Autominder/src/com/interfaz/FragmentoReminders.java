@@ -61,6 +61,15 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 			startActivityForResult(i, 555);
 			break;
 		}
-		
+	}
+	
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == 555){//volvio de AddMaintenanceActivity
+			if(resultCode == getActivity().RESULT_OK){
+				//la siguiente linea funciona
+				//Toast.makeText(getActivity(), "Volvio al FragmentoRecords!", Toast.LENGTH_SHORT).show();
+				((MainActivity)getActivity()).crearNotificationService();
+			}
+		}
 	}
 }

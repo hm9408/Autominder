@@ -63,6 +63,7 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 		
 		
 		Button b = (Button)findViewById(R.id.reg_mant_2);
+		b.setEnabled(!remindersForToday.isEmpty());
 		b.setOnClickListener(this);
 	}
 
@@ -76,9 +77,12 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 				Intent i = new Intent(this, newRecordActivity.class);
 				startActivityForResult(i, 888);
 			}else{
-				p.setSelectedName(remindersForToday.get(0).getNombreCarro());
-				Intent i = new Intent(this, newRecordActivity.class);
-				startActivityForResult(i, 888);
+				if (!remindersForToday.isEmpty()) {
+					p.setSelectedName(remindersForToday.get(0).getNombreCarro());
+					Intent i = new Intent(this, newRecordActivity.class);
+					startActivityForResult(i, 888);
+				}
+				
 			}
 			break;
 		}
@@ -86,10 +90,11 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 	
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == 888){
+		if(requestCode == 888){//vuelve de newRecordActivity
 			if(resultCode == RESULT_OK){
 				getActionBar().setTitle(p.getSelected().getName());
-				finish();
+				Intent openMainActivity= new Intent(this, MainActivity.class);
+				startActivity(openMainActivity);
 				//la siguiente linea funciona
 				//Toast.makeText(getActivity(), "Volvio al FragmentoRecords!", Toast.LENGTH_SHORT).show();
 			}

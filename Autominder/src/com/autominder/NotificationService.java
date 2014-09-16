@@ -34,7 +34,6 @@ public class NotificationService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) 
 	{
-		Toast.makeText(getApplicationContext(), "checking if there are reminders for today", Toast.LENGTH_SHORT).show();
 		instancia = Principal.darInstancia(getApplicationContext());
 		ArrayList<Reminder>absolutelyAllReminders = instancia.obtenerReminders();
 		if (absolutelyAllReminders!=null) {
@@ -48,7 +47,8 @@ public class NotificationService extends Service {
 				NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
 					.setContentTitle(getApplicationContext().getText(R.string.you_have)+" "+remindersForToday.size()+" "+getApplicationContext().getText(R.string.reminders_due))
 					.setContentText(getApplicationContext().getText(R.string.maintenance_reminder_sub))
-					.setSmallIcon(R.drawable.ic_launcher);
+					.setSmallIcon(R.drawable.ic_launcher)
+					.setAutoCancel(true);
 				
 				Intent notificationIntent = new Intent(getApplicationContext(), PendingRemindersActivity.class);
 				PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);

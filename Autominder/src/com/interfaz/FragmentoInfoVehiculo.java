@@ -80,11 +80,12 @@ public class FragmentoInfoVehiculo extends Fragment implements OnClickListener {
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		if(requestCode == 777){
+		if(requestCode == 777){//viene de edit
 			if(resultCode == getActivity().RESULT_OK){
 				getActivity().getActionBar().setTitle(instancia.getSelected().getName());
 				//la siguiente linea funciona
-				//Toast.makeText(getActivity(), "Volvio al FragmentoInfoVehiculo!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(getActivity(), "editVehicle Volvio al FragmentoInfoVehiculo!", Toast.LENGTH_SHORT).show();
+				((MainActivity)getActivity()).crearNotificationService();
 			}
 		}
 	}

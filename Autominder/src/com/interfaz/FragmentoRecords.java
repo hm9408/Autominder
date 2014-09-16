@@ -71,6 +71,7 @@ public class FragmentoRecords extends Fragment implements OnClickListener{
 				getActivity().getActionBar().setTitle(p.getSelected().getName());
 				//la siguiente linea funciona
 				//Toast.makeText(getActivity(), "Volvio al FragmentoRecords!", Toast.LENGTH_SHORT).show();
+				((MainActivity)getActivity()).crearNotificationService();
 			}
 		}
 	}

@@ -223,28 +223,20 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		}
 		if(earliest != null){
 			alarmManager.setExact(AlarmManager.RTC_WAKEUP, earliest.getFecha().getTime(), pendingIntent);
-			Toast.makeText(this, "alarma creada", Toast.LENGTH_SHORT).show();
-		}else{
-			Toast.makeText(this, "No hay recordatorios", Toast.LENGTH_SHORT).show();
 		}
 		
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent data) {
-		if(requestCode == 666){
+		if(requestCode == 666){//vuelve de AddVehicleActivity
 			if(resultCode == RESULT_OK){
 				adapter.notifyDataSetChanged();
 				instancia.setSelected(instancia.getVehiculos().get(instancia.getVehiculos().size()-1));
 				getActionBar().setTitle(instancia.getSelected().getName());
 				crearNotificationService();
 			}
-		}else if(requestCode == 777){
-			if(resultCode == RESULT_OK){
-				getActionBar().setTitle(instancia.getSelected().getName());
-				crearNotificationService();
-			}
-		}else if(requestCode == 999){
+		}else if(requestCode == 999){//vuelve de PendingRemindersActivity
 			if(resultCode == RESULT_OK){
 				getActionBar().setTitle(instancia.getSelected().getName());
 				crearNotificationService();
