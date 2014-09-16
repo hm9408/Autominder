@@ -50,7 +50,7 @@ public class ReminderListAdapter extends BaseAdapter {
         }
           
         TextView txtTitle = (TextView) convertView.findViewById(R.id.manten_remin);
-        txtTitle.setText(reminders.get(position).getNombreManten());
+        txtTitle.setText(reminders.get(position).getNombreManten()+" ("+reminders.get(position).getNombreCarro()+")");
         
         TextView fecha = (TextView) convertView.findViewById(R.id.fecha_remin);
         SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy");

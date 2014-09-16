@@ -8,6 +8,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.SimpleFormatter;
 
 public class Vehicle implements Serializable{
 
@@ -94,14 +95,19 @@ public class Vehicle implements Serializable{
 			System.out.println("record: "+darRecordPorMantenimiento(m.getNombre()));
 			if(m.getType() == Maintenance.SEGUN_KM){
 				int kmsUntilNext = m.getKm() - darRecordPorMantenimiento(m.getNombre()).getKmPassedSince();
-				int daysUntilNext = 7*kmsUntilNext/weeklyKM;
+				System.out.println("----------------------KMS UNTILL NEXT:"+kmsUntilNext);
+				long daysUntilNext = 7*kmsUntilNext/weeklyKM;
+				System.out.println("----------------------days UNTILL NEXT:"+daysUntilNext);
 				/**
 				 * si en una semana se recorren weeklyKM km, i.e, 1sem/weeklyKM km,
 				 * entonces se debe multiplicar por 7 para obtener 7dias/weeklyKM km, 
 				 * y finalmente se multiplica por 'kmsUntilNext' km;
 				 * obteniendo 7*kmsUntilNext/weeklyKM dias
 				 */
-				Reminder rem = new Reminder(m.getNombre(), new Date(new Date().getTime() + daysUntilNext*24*60*60*1000), name);
+				long milisUntilNext = new Date().getTime() + daysUntilNext*24*60*60*1000;
+				Date next = new Date(milisUntilNext);
+				System.out.println("--------------------------------NEXT:"+new SimpleDateFormat("dd-MM-yyyy").format(next));
+				Reminder rem = new Reminder(m.getNombre(), next, name);
 				brandNewReminders.add(rem);
 			}else{
 				long timeUntilNext = m.getTiempo() - (new Date().getTime()-darRecordPorMantenimiento(m.getNombre()).getFecha().getTime());

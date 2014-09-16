@@ -6,6 +6,7 @@ import java.util.Date;
 
 import com.autominder.R;
 import com.interfaz.MainActivity;
+import com.interfaz.PendingRemindersActivity;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -33,7 +34,7 @@ public class NotificationService extends Service {
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) 
 	{
-		Toast.makeText(getApplicationContext(), "checking is there are reminders for today", Toast.LENGTH_SHORT).show();
+		Toast.makeText(getApplicationContext(), "checking if there are reminders for today", Toast.LENGTH_SHORT).show();
 		instancia = Principal.darInstancia(getApplicationContext());
 		ArrayList<Reminder>absolutelyAllReminders = instancia.obtenerReminders();
 		if (absolutelyAllReminders!=null) {
@@ -43,17 +44,13 @@ public class NotificationService extends Service {
 				if(r.getFecha().getTime()<new Date().getTime())remindersForToday.add(r);
 			}
 			if (!remindersForToday.isEmpty()) {
-				String remindersForTodayString = "";
-				for (int i = 0; i < remindersForToday.size(); i++) {
-					Reminder r = remindersForToday.get(i);
-					remindersForTodayString=remindersForTodayString+r.getNombreManten()+" - "+r.getNombreCarro()+"\n";
-				}
+				
 				NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
 					.setContentTitle(getApplicationContext().getText(R.string.you_have)+" "+remindersForToday.size()+" "+getApplicationContext().getText(R.string.reminders_due))
-					.setContentText(remindersForTodayString+"\n"+getApplicationContext().getText(R.string.maintenance_reminder_sub))
+					.setContentText(getApplicationContext().getText(R.string.maintenance_reminder_sub))
 					.setSmallIcon(R.drawable.ic_launcher);
 				
-				Intent notificationIntent = new Intent(this, MainActivity.class);
+				Intent notificationIntent = new Intent(getApplicationContext(), PendingRemindersActivity.class);
 				PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 				builder.setContentIntent(contentIntent);
 	

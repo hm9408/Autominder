@@ -27,5 +27,5 @@
     <string name="por_tiempo">Por Tiempo</string>
     <string name="add_maintenance">Agregar Recordatorio</string>
     <string name="km_last_time">Hace cuánto se realizó</string>
-    <string name="pending_maint">Ver Mantenimientos Pendientes</string>
+    <string name="pending_maint">Mantenimientos Pendientes</string>
 </resources>   

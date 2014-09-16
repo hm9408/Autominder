@@ -39,7 +39,7 @@ import com.autominder.R;
 import com.autominder.Reminder;
 import com.autominder.Vehicle;
 
-public class MainActivity extends Activity implements ActionBar.TabListener, OnClickListener{
+public class MainActivity extends Activity implements ActionBar.TabListener{
 
 
 	private Principal instancia; 
@@ -71,7 +71,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnC
 	 * The {@link ViewPager} that will host the section contents.
 	 */
 	ViewPager mViewPager;
-	private Button butPendingMaint;
 
 
 
@@ -98,8 +97,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnC
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		butPendingMaint = (Button) findViewById(R.id.butNavDrawer);
-		butPendingMaint.setOnClickListener(this);
 		// When swiping between different sections, select the corresponding
 		// tab. We can also use ActionBar.Tab#select() to do this if we have
 		// a reference to the Tab.
@@ -182,14 +179,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnC
 		// on first time display view for first nav item
 		//displayView(0);
 		//}
-		
-		Notification noti = new Notification.Builder(this)
-		.setContentTitle("Notificacion test")
-		.setContentText("test")
-		.setSmallIcon(R.drawable.ic_launcher)
-		.build();
-		NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		notificationManager.notify(0, noti);
 
 	}
 
@@ -208,12 +197,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnC
 		PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
 
 		ArrayList<Reminder> allReminders = instancia.obtenerReminders();
-		myIntent.putExtra("allReminders", allReminders);
-		/**
-		 * se crea un arreglo de fechas y solo se genera una alarma si la fecha del 
-		 * recordatorio respectivo no esta ya en el arreglo, finalmente se agrega la
-		 * fecha. Esto con el fin de evitar mas de una alarma/notificacion en el mismo dia.
-		 */
+//		/**
+//		 * se crea un arreglo de fechas y solo se genera una alarma si la fecha del 
+//		 * recordatorio respectivo no esta ya en el arreglo, finalmente se agrega la
+//		 * fecha. Esto con el fin de evitar mas de una alarma/notificacion en el mismo dia.
+//		 */
 //		ArrayList<Date> reminderDates = new ArrayList<Date>();
 //		for (int i = 0; i < allReminders.size(); i++) {
 //			Reminder r = allReminders.get(i);
@@ -233,8 +221,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnC
 			}
 			
 		}
-		alarmManager.setExact(AlarmManager.RTC_WAKEUP, earliest.getFecha().getTime(), pendingIntent);
-		Toast.makeText(this, "alarma creada", Toast.LENGTH_SHORT).show();
+		if(earliest != null){
+			alarmManager.setExact(AlarmManager.RTC_WAKEUP, earliest.getFecha().getTime(), pendingIntent);
+			Toast.makeText(this, "alarma creada", Toast.LENGTH_SHORT).show();
+		}else{
+			Toast.makeText(this, "No hay recordatorios", Toast.LENGTH_SHORT).show();
+		}
+		
 	}
 
 	protected void onActivityResult(int requestCode, int resultCode,
@@ -244,10 +237,17 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnC
 				adapter.notifyDataSetChanged();
 				instancia.setSelected(instancia.getVehiculos().get(instancia.getVehiculos().size()-1));
 				getActionBar().setTitle(instancia.getSelected().getName());
+				crearNotificationService();
 			}
 		}else if(requestCode == 777){
 			if(resultCode == RESULT_OK){
 				getActionBar().setTitle(instancia.getSelected().getName());
+				crearNotificationService();
+			}
+		}else if(requestCode == 999){
+			if(resultCode == RESULT_OK){
+				getActionBar().setTitle(instancia.getSelected().getName());
+				crearNotificationService();
 			}
 		}
 	}
@@ -294,6 +294,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnC
 		case(R.id.add_vehicle):
 			Intent i = new Intent(this, AddVehicleActivity.class);
 			startActivityForResult(i, 666);
+			return true;
+		case(R.id.pending_reminders):
+			Intent in = new Intent(this, PendingRemindersActivity.class);
+			startActivityForResult(in, 999);
 			return true;
 		case android.R.id.home:
 	        if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
@@ -372,14 +376,4 @@ public class MainActivity extends Activity implements ActionBar.TabListener, OnC
 		}
 	}
 
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.butNavDrawer:
-			Intent i = new Intent(this, PendingRemindersActivity.class);
-			startActivity(i);
-			break;
-		}
-		
-	}
 }

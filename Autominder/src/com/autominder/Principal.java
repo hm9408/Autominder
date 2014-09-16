@@ -198,4 +198,12 @@ public class Principal implements Serializable{
 		saveState();
 		return a;
 	}
+
+	public void setSelectedName(String nombreCarro) {
+		for (int i = 0; i < vehiculos.size(); i++) {
+			Vehicle act = vehiculos.get(i);
+			if(act.getName().equalsIgnoreCase(nombreCarro))selected=act;
+		}
+		
+	}
 }
