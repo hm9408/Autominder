@@ -68,6 +68,14 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 	}
 
 	@Override
+	public void onBackPressed() {
+		// TODO Auto-generated method stub
+		super.onBackPressed();
+		Intent openMainActivity= new Intent(this, MainActivity.class);
+		startActivity(openMainActivity);
+	}
+	
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.reg_mant_2:
@@ -82,7 +90,6 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 					Intent i = new Intent(this, newRecordActivity.class);
 					startActivityForResult(i, 888);
 				}
-				
 			}
 			break;
 		}
@@ -92,11 +99,8 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == 888){//vuelve de newRecordActivity
 			if(resultCode == RESULT_OK){
-				getActionBar().setTitle(p.getSelected().getName());
-				Intent openMainActivity= new Intent(this, MainActivity.class);
-				startActivity(openMainActivity);
-				//la siguiente linea funciona
-				//Toast.makeText(getActivity(), "Volvio al FragmentoRecords!", Toast.LENGTH_SHORT).show();
+				setResult(RESULT_OK);
+				finish();
 			}
 		}
 	}
