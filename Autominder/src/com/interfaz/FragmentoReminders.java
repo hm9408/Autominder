@@ -22,9 +22,10 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 	ListView list;
 	Principal p;
 	private Button butAddMaint;
+	MainActivity ma;
 
-	public FragmentoReminders() {
-		// TODO Auto-generated constructor stub
+	public FragmentoReminders(MainActivity mainActivity) {
+		ma = mainActivity;
 	}
 
 	@Override
@@ -40,7 +41,7 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 		butAddMaint.setOnClickListener(this);
 		// setting the nav drawer list adapter
 		p = Principal.darInstancia(getActivity());
-		ReminderListAdapter adapter = new ReminderListAdapter(getActivity(),p.getSelected().getReminders());
+		ReminderListAdapter adapter = new ReminderListAdapter(getActivity(),p.getSelected().getReminders(), ma);
 		list.setAdapter(adapter);
 
 		return v;
@@ -50,7 +51,7 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		list.setAdapter(new ReminderListAdapter(getActivity(),p.getSelected().getReminders()));
+		list.setAdapter(new ReminderListAdapter(getActivity(),p.getSelected().getReminders(), ma));
 
 	}
 	@Override

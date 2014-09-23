@@ -179,7 +179,6 @@ public class Vehicle implements Serializable{
 		calcularRecordatorios();
 	}
 	
-
 	public void addNewRecord(Record r) {
 		boolean finished = false;
 		for (int i = 0; i < records.size() && !finished; i++) {
@@ -206,6 +205,26 @@ public class Vehicle implements Serializable{
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Elimina el mantenimiento cuyo nombre es dado por parametro, 
+	 * asi como su record y recalcula los reminders
+	 */
+	public void removeMaintenance(String maintenanceName){
+		Maintenance m = null;
+		
+		for (int i = 0; i < maintenances.size(); i++) {
+			Maintenance act = maintenances.get(i);
+			if(act.getNombre().equals(maintenanceName))
+				m = act;
+		}
+		
+		if(m != null){
+			maintenances.remove(m);
+			records.remove(darRecordPorMantenimiento(maintenanceName));
+			calcularRecordatorios();
+		}
 	}
 
 }

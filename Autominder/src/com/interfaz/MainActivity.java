@@ -92,7 +92,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		// Create the adapter that will return a fragment for each of the three
 		// primary sections of the activity.
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager());
+		mSectionsPagerAdapter = new SectionsPagerAdapter(getFragmentManager(), this);
 
 		// Set up the ViewPager with the sections adapter.
 		mViewPager = (ViewPager) findViewById(R.id.pager);
@@ -254,10 +254,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 				long id) {
 			instancia.setSelected(instancia.getVehiculos().get(position)); //sets selected vehicle
 			getActionBar().setTitle(instancia.getSelected().getName());
-			mViewPager.setAdapter(mSectionsPagerAdapter);
-			getActionBar().setSelectedNavigationItem(0);
+			forzarRefresh(1);
 			mDrawerLayout.closeDrawers();
 		}
+	}
+	
+	public void forzarRefresh(int pageNumberToShow){
+		mViewPager.setAdapter(mSectionsPagerAdapter);
+		getActionBar().setSelectedNavigationItem(pageNumberToShow);
 	}
 
 	@Override
@@ -331,12 +335,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 
 		List<Fragment> fragments;
 
-		public SectionsPagerAdapter(FragmentManager fm) {
+		public SectionsPagerAdapter(FragmentManager fm, MainActivity mainActivity) {
 			super(fm);
 			fragments = new ArrayList<Fragment>();
 			fragments.add( new FragmentoRecords());
 			fragments.add( new FragmentoInfoVehiculo());
-			fragments.add( new FragmentoReminders());
+			fragments.add( new FragmentoReminders(mainActivity));
 		}
 
 		@Override
