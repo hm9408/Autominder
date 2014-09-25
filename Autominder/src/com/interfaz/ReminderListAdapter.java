@@ -114,7 +114,7 @@ public class ReminderListAdapter extends BaseAdapter {
 							instancia.saveState();
 
 							if (ma != null){
-								ma.forzarRefresh(2);
+								ma.forzarRefresh(1);
 								ma.crearNotificationService();
 							}
 							break;

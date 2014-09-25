@@ -71,7 +71,7 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 				((MainActivity)getActivity()).crearNotificationService();
 			}
 		}else if (requestCode == 222) {//volvio de editMaintenanceActivity
-			((MainActivity)getActivity()).forzarRefresh(2);
+			((MainActivity)getActivity()).forzarRefresh(1);
 			((MainActivity)getActivity()).crearNotificationService();
 		}
 	}
