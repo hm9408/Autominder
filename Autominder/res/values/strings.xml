@@ -28,4 +28,10 @@
     <string name="add_maintenance">Agregar Recordatorio</string>
     <string name="km_last_time">Hace cuánto se realizó</string>
     <string name="pending_maint">Mantenimientos Pendientes</string>
+    
+    <string-array name="time_choices">
+        <item>días</item>
+        <item>meses</item>
+        <item>años</item>
+    </string-array>
 </resources>   

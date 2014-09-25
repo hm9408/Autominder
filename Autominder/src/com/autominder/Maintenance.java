@@ -2,6 +2,8 @@ package com.autominder;
 
 import java.io.Serializable;
 
+import android.text.format.Time;
+
 public class Maintenance implements Serializable{
 
 	private static final long serialVersionUID = 2732812090880984675L;
@@ -33,6 +35,12 @@ public class Maintenance implements Serializable{
 	}
 	public long getTiempo() {
 		return tiempo;
+	}
+	public void setKm(int km) {
+		this.km = km;
+	}
+	public void setTiempo(long tiempo) {
+		this.tiempo = tiempo;
 	}
 	
 }

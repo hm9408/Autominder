@@ -226,5 +226,42 @@ public class Vehicle implements Serializable{
 			calcularRecordatorios();
 		}
 	}
+	
+	public Maintenance getMaintenance(String name){
+		Maintenance a = null;
+		
+		for (int i = 0; i < maintenances.size(); i++) {
+			Maintenance act = maintenances.get(i);
+			if(name.equalsIgnoreCase(act.getNombre()))
+				a = act;
+		}
+		
+		return a;
+	}
 
+	public void modifyMaintenance(String maintenName, int newKmInterval, int newTimeInterval, String timeChoice){
+		boolean over = false;
+		for (int i = 0; i < maintenances.size() && !over; i++) {
+			Maintenance x = maintenances.get(i);
+			if(x.getNombre().equalsIgnoreCase(maintenName)){
+				if(x.getType() == Maintenance.SEGUN_KM){
+					maintenances.get(i).setKm(newKmInterval);
+					calcularRecordatorios();
+				}else if(x.getType() == Maintenance.SEGUN_TIEMPO){
+					long newTimeIntervalMilis = 0;
+					if(timeChoice.equalsIgnoreCase("días")){
+						newTimeIntervalMilis = newTimeInterval*24*60*60*1000;
+					}else if(timeChoice.equalsIgnoreCase("meses")){
+						newTimeIntervalMilis = newTimeInterval*30*24*60*60*1000;
+					}else if(timeChoice.equalsIgnoreCase("años")){
+						newTimeIntervalMilis = newTimeInterval*365*24*60*60*1000;
+					}
+					System.out.println("----------------------------------newTimeIntervalMilis ="+newTimeIntervalMilis);
+					maintenances.get(i).setTiempo(newTimeIntervalMilis);
+					calcularRecordatorios();
+				}
+				over = true;
+			}
+		}
+	}
 }

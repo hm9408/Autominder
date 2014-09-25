@@ -340,7 +340,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			fragments = new ArrayList<Fragment>();
 			fragments.add( new FragmentoRecords());
 			fragments.add( new FragmentoInfoVehiculo());
-			fragments.add( new FragmentoReminders(mainActivity));
+			fragments.add( new FragmentoReminders());
 		}
 
 		@Override

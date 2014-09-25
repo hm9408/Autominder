@@ -46,7 +46,7 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 			if(r.getFecha().getTime()<new Date().getTime())remindersForToday.add(r);
 		}
 		System.out.println("TAMAÑO RFT1:"+remindersForToday.size());
-		ReminderListAdapter adapter = new ReminderListAdapter(this,remindersForToday, null);
+		ReminderListAdapter adapter = new ReminderListAdapter(this,remindersForToday, null, null);
 		list.setAdapter(adapter);
 		list.setOnItemClickListener(new OnItemClickListener() {
 

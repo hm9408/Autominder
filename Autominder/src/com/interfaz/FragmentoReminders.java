@@ -22,10 +22,8 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 	ListView list;
 	Principal p;
 	private Button butAddMaint;
-	MainActivity ma;
 
-	public FragmentoReminders(MainActivity mainActivity) {
-		ma = mainActivity;
+	public FragmentoReminders() {
 	}
 
 	@Override
@@ -41,7 +39,7 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 		butAddMaint.setOnClickListener(this);
 		// setting the nav drawer list adapter
 		p = Principal.darInstancia(getActivity());
-		ReminderListAdapter adapter = new ReminderListAdapter(getActivity(),p.getSelected().getReminders(), ma);
+		ReminderListAdapter adapter = new ReminderListAdapter(getActivity(),p.getSelected().getReminders(), (MainActivity)getActivity(), this);
 		list.setAdapter(adapter);
 
 		return v;
@@ -51,7 +49,7 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 	@Override
 	public void onResume() {
 		super.onResume();
-		list.setAdapter(new ReminderListAdapter(getActivity(),p.getSelected().getReminders(), ma));
+		list.setAdapter(new ReminderListAdapter(getActivity(),p.getSelected().getReminders(), (MainActivity)getActivity(), this));
 
 	}
 	@Override
@@ -64,6 +62,7 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 		}
 	}
 	
+	@SuppressWarnings("static-access")
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == 555){//volvio de AddMaintenanceActivity
 			if(resultCode == getActivity().RESULT_OK){
@@ -71,6 +70,9 @@ public class FragmentoReminders extends Fragment implements OnClickListener {
 				//Toast.makeText(getActivity(), "Volvio al FragmentoRecords!", Toast.LENGTH_SHORT).show();
 				((MainActivity)getActivity()).crearNotificationService();
 			}
+		}else if (requestCode == 222) {//volvio de editMaintenanceActivity
+			((MainActivity)getActivity()).forzarRefresh(2);
+			((MainActivity)getActivity()).crearNotificationService();
 		}
 	}
 }

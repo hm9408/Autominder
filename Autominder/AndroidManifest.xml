@@ -28,6 +28,7 @@
         <activity android:name="com.interfaz.AddMaintenanceActivity"></activity>
         <activity android:name="com.interfaz.newRecordActivity"></activity>
         <activity android:name="com.interfaz.PendingRemindersActivity"></activity>
+        <activity android:name="com.interfaz.EditMaintenanceActivity"></activity>
     </application>
 
 </manifest>
