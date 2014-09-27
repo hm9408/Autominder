@@ -70,7 +70,7 @@ public class ReminderListAdapter extends BaseAdapter {
 		fecha.setText(df.format(reminders.get(position).getFecha()));
 
 		ImageButton borrar = (ImageButton)convertView.findViewById(R.id.btn_eliminar);
-		borrar.setEnabled(reminders.size() != 1);
+		borrar.setVisibility(reminders.size() != 1?View.VISIBLE:View.GONE);
 		borrar.setOnClickListener(new AccionOnClickListener(context, mainActivity, reminders.get(position).getNombreManten(), fr, AccionOnClickListener.ELIMINAR));
 
 		ImageButton editar = (ImageButton)convertView.findViewById(R.id.btn_editar);
