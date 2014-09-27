@@ -195,7 +195,9 @@ public class Principal implements Serializable{
 	
 	public boolean addMaintenanceSelected(Maintenance m, Record r){
 		boolean a = selected.addNewMaintenance(m, r);
-		saveState();
+		if(a){
+			saveState();
+		}
 		return a;
 	}
 

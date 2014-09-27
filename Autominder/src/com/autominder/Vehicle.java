@@ -3,6 +3,7 @@ package com.autominder;
 import android.annotation.SuppressLint;
 
 import java.io.Serializable;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -110,7 +111,7 @@ public class Vehicle implements Serializable{
 				Reminder rem = new Reminder(m.getNombre(), next, name);
 				brandNewReminders.add(rem);
 			}else{
-				long timeUntilNext = m.getTiempo() - (new Date().getTime()-darRecordPorMantenimiento(m.getNombre()).getFecha().getTime());
+				long timeUntilNext = new Date().getTime() + m.getTiempo() - (new Date().getTime()-darRecordPorMantenimiento(m.getNombre()).getFecha().getTime());
 				Reminder rem = new Reminder(m.getNombre(), new Date(timeUntilNext), name);
 				brandNewReminders.add(rem);
 			}
@@ -191,6 +192,10 @@ public class Vehicle implements Serializable{
 		}
 		calcularRecordatorios();
 	} 
+	
+	/**
+	 * @return retorna false si ya existe un mantenimiento con ese nombre 
+	 */
 	public boolean addNewMaintenance(Maintenance m, Record r){
 		boolean noExiste = true;
 		for (int i = 0; i < maintenances.size() && noExiste ; i++) {
@@ -250,11 +255,11 @@ public class Vehicle implements Serializable{
 				}else if(x.getType() == Maintenance.SEGUN_TIEMPO){
 					long newTimeIntervalMilis = 0;
 					if(timeChoice.equalsIgnoreCase("días")){
-						newTimeIntervalMilis = newTimeInterval*24*60*60*1000;
+						newTimeIntervalMilis = ((long)newTimeInterval)*24*60*60*1000;
 					}else if(timeChoice.equalsIgnoreCase("meses")){
-						newTimeIntervalMilis = newTimeInterval*30*24*60*60*1000;
+						newTimeIntervalMilis = ((long)newTimeInterval)*30*24*60*60*1000;
 					}else if(timeChoice.equalsIgnoreCase("años")){
-						newTimeIntervalMilis = newTimeInterval*365*24*60*60*1000;
+						newTimeIntervalMilis = ((long)newTimeInterval)*365*24*60*60*1000;
 					}
 					System.out.println("----------------------------------newTimeIntervalMilis ="+newTimeIntervalMilis);
 					maintenances.get(i).setTiempo(newTimeIntervalMilis);
@@ -263,5 +268,17 @@ public class Vehicle implements Serializable{
 				over = true;
 			}
 		}
+	}
+
+	public int getKmPassedSince(Date date) {
+		int dailyKm = weeklyKM/7;
+		long daysPassed = ((new Date()).getTime() - date.getTime())/(1000*60*60*24);
+		return (int) (dailyKm*daysPassed);
+	}
+
+	public Date getEstimatedDate(int kmSince) {
+		int dailyKm = weeklyKM/7;
+		int daysPassed = kmSince/dailyKm;
+		return new Date((new Date()).getTime()-(daysPassed*24*60*60*1000));
 	}
 }

@@ -47,27 +47,28 @@ public class EditMaintenanceActivity extends Activity implements OnItemSelectedL
 		x = instancia.getSelected().getMaintenance(maintenName);
 
 		if(x.getType() == Maintenance.SEGUN_KM){
+			
 			LinearLayout ll_tiempo = (LinearLayout)findViewById(R.id.edit_time_layout);
-			((ViewManager)ll_tiempo.getParent()).removeView(ll_tiempo);
-
+			ll_tiempo.setVisibility(View.GONE);
+			
 			txtKm = (EditText)findViewById(R.id.mainten_km_txt);
 			txtKm.setText(""+x.getKm());
-
-			/*NI PUTA IDEA DE PORQUE TOCA CREAR myView
-			 * PERO SI NO, sp QUEDA NULO
-			 * http://stackoverflow.com/a/18690657/2109083*/
-			View myView = getLayoutInflater().inflate(R.layout.edit_maintenance_activity, null);
-			Spinner sp = (Spinner)myView.findViewById(R.id.spinner_time);
+			
+		}else if(x.getType() == Maintenance.SEGUN_TIEMPO){
+			
+			LinearLayout ll_km = (LinearLayout)findViewById(R.id.edit_km_layout);
+			ll_km.setVisibility(View.GONE);
+			
+			txtTime = (EditText)findViewById(R.id.new_mainten_time_txt);
+			long factorMult = (long)30*24*60*60*1000;
+			txtTime.setText(""+(x.getTiempo()/factorMult));
+			
+			Spinner sp = (Spinner)findViewById(R.id.spinner_time);
 			ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.time_choices, android.R.layout.simple_spinner_item);
 			adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 			sp.setAdapter(adapter);
 			sp.setOnItemSelectedListener(this);
-		}else if(x.getType() == Maintenance.SEGUN_TIEMPO){
-			LinearLayout ll_km = (LinearLayout)findViewById(R.id.edit_km_layout);
-			((ViewManager)ll_km.getParent()).removeView(ll_km);
-
-			txtTime = (EditText)findViewById(R.id.mainten_time_txt);
-			txtTime.setText(""+x.getTiempo());
+			sp.setSelection(1);
 		}
 
 	}

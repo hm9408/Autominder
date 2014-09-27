@@ -40,12 +40,12 @@
 		<name>Impuesto</name>
 		<type>2</type>
 		<km>-1</km>
-		<time>31536000000</time>
+		<time>31104000000</time>
 	</maintenance>
     <maintenance ID="insurance">
 		<name>Seguro</name>
 		<type>2</type>
 		<km>-1</km>
-		<time>31536000000</time>
+		<time>31104000000</time>
 	</maintenance>
 </maintenances>
