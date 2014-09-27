@@ -137,7 +137,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 
 
 		// setting the nav drawer list adapter
-		adapter = new NavDrawerListAdapter(getApplicationContext(),
+		adapter = new NavDrawerListAdapter(this, this,
 				instancia.getVehiculos());
 		mDrawerList.setAdapter(adapter);
 
@@ -262,6 +262,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	public void forzarRefresh(int pageNumberToShow){
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		getActionBar().setSelectedNavigationItem(pageNumberToShow);
+	}
+	
+	public void refreshDrawer(){
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override

@@ -47,7 +47,7 @@ public class NotificationService extends Service {
 				NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
 					.setContentTitle(getApplicationContext().getText(R.string.you_have)+" "+remindersForToday.size()+" "+getApplicationContext().getText(R.string.reminders_due))
 					.setContentText(getApplicationContext().getText(R.string.maintenance_reminder_sub))
-					.setSmallIcon(R.drawable.ic_launcher)
+					.setSmallIcon(R.drawable.notif_icon)
 					.setAutoCancel(true);
 				
 				Intent notificationIntent = new Intent(getApplicationContext(), PendingRemindersActivity.class);

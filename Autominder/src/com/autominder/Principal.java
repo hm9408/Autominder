@@ -22,6 +22,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import android.content.Context;
+import android.view.View;
 
 public class Principal implements Serializable{
 
@@ -205,6 +206,19 @@ public class Principal implements Serializable{
 		for (int i = 0; i < vehiculos.size(); i++) {
 			Vehicle act = vehiculos.get(i);
 			if(act.getName().equalsIgnoreCase(nombreCarro))selected=act;
+		}
+		
+	}
+
+	public void deleteVehicle(Vehicle vehicle) {
+		for (int i = 0; i < vehiculos.size(); i++) {
+			Vehicle act = vehiculos.get(i);
+			if (vehicle.getName().equals(act.getName())) {
+				vehiculos.remove(i);
+				if(vehicle.getName().equals(selected.getName())){
+					setSelected(vehiculos.get(0));
+				}
+			}
 		}
 		
 	}
