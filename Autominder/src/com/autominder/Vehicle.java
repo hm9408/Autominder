@@ -1,15 +1,12 @@
 package com.autominder;
 
-import android.annotation.SuppressLint;
-
 import java.io.Serializable;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Locale;
-import java.util.logging.SimpleFormatter;
+
+import android.annotation.SuppressLint;
 
 public class Vehicle implements Serializable{
 
@@ -88,6 +85,7 @@ public class Vehicle implements Serializable{
 	 * record, recalcule la siguiente fecha. Cree todos los reminders y asignelos al
 	 * atributo 'reminders' 
 	 */
+	@SuppressLint("SimpleDateFormat")
 	private void calcularRecordatorios() {
 		ArrayList<Reminder> brandNewReminders = new ArrayList<Reminder>();
 		for(int i = 0; i<maintenances.size(); i++){

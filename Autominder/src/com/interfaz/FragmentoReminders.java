@@ -1,11 +1,5 @@
 package com.interfaz;
 
-import com.autominder.Principal;
-import com.autominder.R;
-import com.autominder.R.id;
-import com.autominder.R.layout;
-import com.autominder.Vehicle;
-
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.autominder.Principal;
+import com.autominder.R;
 
 public class FragmentoReminders extends Fragment implements OnClickListener {
 

@@ -2,11 +2,9 @@ package com.interfaz;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
 import com.autominder.R;
 import com.autominder.Record;
-import com.autominder.Vehicle;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
+@SuppressLint("SimpleDateFormat")
 public class RecordListAdapter extends BaseAdapter {
 
 	private Context context;
@@ -40,7 +39,8 @@ public class RecordListAdapter extends BaseAdapter {
         return position;
     }
  
-    @Override
+    @SuppressLint("InflateParams")
+	@Override
     public View getView(int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             LayoutInflater mInflater = (LayoutInflater)

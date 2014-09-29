@@ -64,6 +64,7 @@ public class FragmentoRecords extends Fragment implements OnClickListener{
 	}
 
 	
+	@SuppressWarnings("static-access")
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == 888){

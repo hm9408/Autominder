@@ -17,7 +17,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.TextView;
 
 public class AddVehicleActivity extends Activity {
@@ -38,6 +37,7 @@ public class AddVehicleActivity extends Activity {
 	private EditText km2;
 	private EditText km3;
 
+	@SuppressWarnings("unused")
 	private Button addVehicleButton;
 
 	private Principal instancia;

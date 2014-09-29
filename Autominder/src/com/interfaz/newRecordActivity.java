@@ -6,27 +6,25 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import com.autominder.Maintenance;
-import com.autominder.Principal;
-import com.autominder.R;
-import com.autominder.Record;
-
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.os.Bundle;
-import android.app.FragmentManager;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.DialogInterface;
-import android.support.v4.app.FragmentActivity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+import com.autominder.Maintenance;
+import com.autominder.Principal;
+import com.autominder.R;
+import com.autominder.Record;
 
+@SuppressLint("SimpleDateFormat")
 public class newRecordActivity extends Activity implements OnDateSetListener{
 
 	Principal instancia;
