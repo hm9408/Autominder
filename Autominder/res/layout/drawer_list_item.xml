@@ -6,40 +6,26 @@
     android:gravity="center"
     android:orientation="horizontal"
     android:padding="@dimen/activity_horizontal_margin"
+    android:descendantFocusability="blocksDescendants"
     android:weightSum="1" >
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="0.9"
-        android:orientation="vertical" >
+        android:gravity="center_vertical"
+        android:minHeight="?android:attr/listPreferredItemHeightSmall"
+        android:text="VehicleName"
+        android:textAppearance="?android:attr/textAppearanceListItemSmall"
+        android:textColor="#FFFFFF" />
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:textColor="#FFFFFF"
-            android:minHeight="?android:attr/listPreferredItemHeightSmall"
-            android:text="VehicleName"
-            android:textAppearance="?android:attr/textAppearanceListItemSmall" />
-        
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+    <ImageButton
+        android:id="@+id/btn_eliminar_vehiculo"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="27dp"
+        android:layout_height="25dp"
         android:layout_weight="0.1"
-        android:gravity="center"
-        android:orientation="horizontal" >
-
-        <ImageButton
-            android:id="@+id/btn_eliminar_vehiculo"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_width="27dp"
-            android:layout_height="25dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/white_trash" />
-    </LinearLayout>
-
+        android:scaleType="fitCenter"
+        android:src="@drawable/white_trash" />
 </LinearLayout>

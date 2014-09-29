@@ -179,6 +179,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		// on first time display view for first nav item
 		//displayView(0);
 		//}
+		
+		forzarRefresh(1);
 
 	}
 
@@ -259,9 +261,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		}
 	}
 	
-	public void forzarRefresh(int pageNumberToShow){
+	public void forzarRefresh(int i){
 		mViewPager.setAdapter(mSectionsPagerAdapter);
-		getActionBar().setSelectedNavigationItem(pageNumberToShow);
+		getActionBar().setSelectedNavigationItem(i);
+		mViewPager.setCurrentItem(i);
 	}
 	
 	public void refreshDrawer(){
