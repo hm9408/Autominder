@@ -2,7 +2,6 @@ package com.interfaz;
 
 import com.autominder.Principal;
 import com.autominder.R;
-import com.autominder.Vehicle;
 
 import android.app.Activity;
 import android.app.AlertDialog;

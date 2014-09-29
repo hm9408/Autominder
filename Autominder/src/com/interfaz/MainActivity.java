@@ -1,7 +1,6 @@
 package com.interfaz;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -11,8 +10,6 @@ import android.app.AlarmManager;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.app.Notification;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -21,23 +18,16 @@ import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.autominder.NotificationService;
 import com.autominder.Principal;
 import com.autominder.R;
 import com.autominder.Reminder;
-import com.autominder.Vehicle;
 
 public class MainActivity extends Activity implements ActionBar.TabListener{
 
@@ -51,6 +41,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	private CharSequence mDrawerTitle;
 
 	// used to store app title
+	@SuppressWarnings("unused")
 	private CharSequence mTitle;
 
 

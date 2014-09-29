@@ -1,6 +1,5 @@
 package com.autominder;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,7 +21,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import android.content.Context;
-import android.view.View;
 
 public class Principal implements Serializable{
 
@@ -151,6 +149,7 @@ public class Principal implements Serializable{
 		return allReminders;
 	}
 
+	@SuppressWarnings("static-access")
 	public void saveState(){
 		try {
 			FileOutputStream fos = c.openFileOutput(file, c.MODE_PRIVATE);
@@ -175,7 +174,6 @@ public class Principal implements Serializable{
 	 * @return true si se logró agregar el vehiculo, false si ya existe un vehiculo con ese nombre
 	 */
 	public boolean addVehicle(Vehicle v) {
-		boolean existe = false;
 		for (int i = 0; i < vehiculos.size(); i++) {
 			Vehicle act = vehiculos.get(i);
 			if(act.getName().equals(v.getName())) return false;

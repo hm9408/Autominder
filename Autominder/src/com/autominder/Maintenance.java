@@ -2,7 +2,6 @@ package com.autominder;
 
 import java.io.Serializable;
 
-import android.text.format.Time;
 
 public class Maintenance implements Serializable{
 
