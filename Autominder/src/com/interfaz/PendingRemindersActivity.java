@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Adapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -30,6 +31,9 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.pending_reminders);
+		
+		getActionBar().setTitle("Autominder - Pendientes");
+		
 		selection = -1;
 		
 		list = (ListView)findViewById(R.id.pending_reminders_list);
@@ -39,33 +43,16 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 
 		// setting the nav drawer list adapter
 		p = Principal.darInstancia(this);
-		ArrayList<Reminder>absolutelyAllReminders = p.obtenerReminders();
-		remindersForToday= new ArrayList<Reminder>();
-		for (int i = 0; i < absolutelyAllReminders.size(); i++) {
-			Reminder r = absolutelyAllReminders.get(i);
-			if(r.getFecha().getTime()<new Date().getTime())remindersForToday.add(r);
-		}
-		System.out.println("TAMAÑO RFT1:"+remindersForToday.size());
-		ReminderListAdapter adapter = new ReminderListAdapter(this,remindersForToday, null, null);
-		list.setAdapter(adapter);
-		list.setOnItemClickListener(new OnItemClickListener() {
-
-		    @Override
-		    public void onItemClick(AdapterView<?> parent, View view, int position,long arg3) {
-		        view.setSelected(true);
-		        System.out.println("CLICK:"+position);
-		        list.setSelection(position);
-		        selection = position;
-		    }
-		});
+		refresh();
 		list.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		
 		
 		
 		Button b = (Button)findViewById(R.id.reg_mant_2);
 		b.setEnabled(!remindersForToday.isEmpty());
 		b.setOnClickListener(this);
 	}
+	
+	
 
 	@Override
 	public void onBackPressed() {
@@ -103,5 +90,32 @@ public class PendingRemindersActivity extends Activity implements OnClickListene
 				finish();
 			}
 		}
+	}
+
+
+
+	public void refresh() {
+		System.out.println("///////////////////////////HACE REFRESH");
+		ArrayList<Reminder>absolutelyAllReminders = p.obtenerReminders();
+		remindersForToday= new ArrayList<Reminder>();
+		for (int i = 0; i < absolutelyAllReminders.size(); i++) {
+			Reminder r = absolutelyAllReminders.get(i);
+			if(r.getFecha().getTime()<new Date().getTime())remindersForToday.add(r);
+		}
+		
+		ReminderListAdapter adapter = new ReminderListAdapter(this,remindersForToday, null, null);
+		adapter.SetPendingRemindersAct(this);
+		list.setAdapter(adapter);
+		list.setOnItemClickListener(new OnItemClickListener() {
+
+		    @Override
+		    public void onItemClick(AdapterView<?> parent, View view, int position,long arg3) {
+		        view.setSelected(true);
+		        System.out.println("CLICK:"+position);
+		        list.setSelection(position);
+		        selection = position;
+		    }
+		    
+		});
 	}
 }

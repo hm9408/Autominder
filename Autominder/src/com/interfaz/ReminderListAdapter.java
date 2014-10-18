@@ -27,6 +27,7 @@ public class ReminderListAdapter extends BaseAdapter {
 	private ArrayList<Reminder> reminders;
 	private MainActivity mainActivity;
 	private FragmentoReminders fr;
+	private PendingRemindersActivity pra;
 
 	public ReminderListAdapter(Context context, ArrayList<Reminder> reminders, MainActivity ma, FragmentoReminders fr){
 		this.context = context;
@@ -67,10 +68,10 @@ public class ReminderListAdapter extends BaseAdapter {
 
 		ImageButton borrar = (ImageButton)convertView.findViewById(R.id.btn_eliminar);
 		borrar.setVisibility(reminders.size() != 1?View.VISIBLE:View.GONE);
-		borrar.setOnClickListener(new AccionOnClickListener(context, mainActivity, reminders.get(position).getNombreManten(), fr, AccionOnClickListener.ELIMINAR));
+		borrar.setOnClickListener(new AccionOnClickListener(context, mainActivity, reminders.get(position).getNombreManten(), fr, AccionOnClickListener.ELIMINAR, null));
 
 		ImageButton editar = (ImageButton)convertView.findViewById(R.id.btn_editar);
-		editar.setOnClickListener(new AccionOnClickListener(context, mainActivity, reminders.get(position).getNombreManten(), fr, AccionOnClickListener.EDITAR));
+		editar.setOnClickListener(new AccionOnClickListener(context, mainActivity, reminders.get(position).getNombreManten(), fr, AccionOnClickListener.EDITAR, null));
 
 		return convertView;
 	}
@@ -82,16 +83,18 @@ public class ReminderListAdapter extends BaseAdapter {
 		FragmentoReminders fr;
 		String maintenanceName;
 		int tipoRespuesta;
+		PendingRemindersActivity pra;
 
 		public final static int ELIMINAR = 1;
 		public final static int EDITAR = 2;
 
-		public AccionOnClickListener(Context context, MainActivity ma, String string, FragmentoReminders fr, int tipoRespuesta) {
+		public AccionOnClickListener(Context context, MainActivity ma, String string, FragmentoReminders fr, int tipoRespuesta, PendingRemindersActivity pra) {
 			this.context = context;
 			this.ma = ma;
 			this.fr = fr;
 			maintenanceName = string;
 			this.tipoRespuesta = tipoRespuesta;
+			this.pra = pra;
 		}
 
 		@Override
@@ -112,6 +115,10 @@ public class ReminderListAdapter extends BaseAdapter {
 							if (ma != null){
 								ma.forzarRefresh(2);
 								ma.crearNotificationService();
+							}
+							
+							if(pra != null){
+								pra.refresh();
 							}
 							break;
 
@@ -137,5 +144,10 @@ public class ReminderListAdapter extends BaseAdapter {
 			}
 		}
 
+	}
+
+	public void SetPendingRemindersAct(PendingRemindersActivity pendingRemindersActivity) {
+		pra = pendingRemindersActivity;
+		
 	}
 }
