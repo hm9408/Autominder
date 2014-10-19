@@ -14,7 +14,7 @@
     <string name="basic_data">Datos Básicos</string>
     <string name="name">nombre</string>
     <string name="current_km">kilometraje actual</string>
-    <string name="weekly_km">kilometros por semana</string>
+    <string name="weekly_km">km</string>
     <string name="reminders">Recordatorios</string>
     <string name="we_recomend_these_reminders">Te recomendamos estos recordatorios, luego podrás editarlos y agregar más</string>
     <string name="you_must_provide">Debes proveer la ultima vez que hiciste esos mantenimientos</string>

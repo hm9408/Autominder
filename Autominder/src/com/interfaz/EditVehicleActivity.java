@@ -34,12 +34,12 @@ public class EditVehicleActivity extends Activity {
 		et = (EditText)findViewById(R.id.new_km);
 		
 		int currentKmCount = instancia.getSelected().getCurrentKmCount();
-		int weeklyKM = instancia.getSelected().getWeeklyKM();
+		double weeklyKM = instancia.getSelected().getWeeklyKM();
 		
 		et.setText(""+currentKmCount);
-		np.setMaxValue(weeklyKM+15);
-		np.setMinValue(weeklyKM>15?weeklyKM-15:0);
-		np.setValue(weeklyKM);
+		np.setMaxValue((int) (weeklyKM+15));
+		np.setMinValue((int) (weeklyKM>15?weeklyKM-15:0));
+		np.setValue((int) weeklyKM);
 		np.setWrapSelectorWheel(false);
 		
 		

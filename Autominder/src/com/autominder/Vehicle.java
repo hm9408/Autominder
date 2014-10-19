@@ -17,17 +17,17 @@ public class Vehicle implements Serializable{
 	/**
 	 * es un numero que indica el numero de kilometros SEMANALES
 	 */
-	private int weeklyKM;
+	private double weeklyKM;
 	private int currentKmCount;
 	private Date lastDayChecked;
 	private ArrayList<Maintenance> maintenances;
 	private ArrayList<Record> records;
 	private ArrayList<Reminder> reminders;
 
-	public Vehicle(String name, int weeklyKM, int currentKmCount,
+	public Vehicle(String name, double vWeeklyKM, int currentKmCount,
 			ArrayList<Maintenance> maintenances, ArrayList<Record> records) {
 		this.name = name;
-		this.weeklyKM = weeklyKM;
+		this.weeklyKM = vWeeklyKM;
 		this.currentKmCount = currentKmCount;
 		lastDayChecked = new Date();
 		this.maintenances = maintenances;
@@ -56,7 +56,7 @@ public class Vehicle implements Serializable{
 		return favorite;
 	}
 
-	public int getWeeklyKM() {
+	public double getWeeklyKM() {
 		return weeklyKM;
 	}
 
@@ -93,9 +93,9 @@ public class Vehicle implements Serializable{
 			System.out.println("mantenimiento: "+m.getNombre());
 			System.out.println("record: "+darRecordPorMantenimiento(m.getNombre()));
 			if(m.getType() == Maintenance.SEGUN_KM){
-				int kmsUntilNext = m.getKm() - darRecordPorMantenimiento(m.getNombre()).getKmPassedSince();
+				double kmsUntilNext = m.getKm() - darRecordPorMantenimiento(m.getNombre()).getKmPassedSince();
 				System.out.println("----------------------KMS UNTILL NEXT:"+kmsUntilNext);
-				long daysUntilNext = 7*kmsUntilNext/weeklyKM;
+				long daysUntilNext = (long) (7*kmsUntilNext/weeklyKM);
 				System.out.println("----------------------days UNTILL NEXT:"+daysUntilNext);
 				/**
 				 * si en una semana se recorren weeklyKM km, i.e, 1sem/weeklyKM km,
@@ -269,14 +269,14 @@ public class Vehicle implements Serializable{
 	}
 
 	public int getKmPassedSince(Date date) {
-		int dailyKm = weeklyKM/7;
+		double dailyKm = weeklyKM/7;
 		long daysPassed = ((new Date()).getTime() - date.getTime())/(1000*60*60*24);
 		return (int) (dailyKm*daysPassed);
 	}
 
 	public Date getEstimatedDate(int kmSince) {
-		int dailyKm = weeklyKM/7;
-		int daysPassed = kmSince/dailyKm;
+		double dailyKm = weeklyKM/7;
+		long daysPassed = (long) (kmSince/dailyKm);
 		return new Date((new Date()).getTime()-(daysPassed*24*60*60*1000));
 	}
 }

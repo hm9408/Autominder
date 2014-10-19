@@ -9,20 +9,27 @@ import com.autominder.R;
 import com.autominder.Record;
 import com.autominder.Vehicle;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
+import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
-public class AddVehicleActivity extends Activity {
+public class AddVehicleActivity extends Activity implements OnEditorActionListener {
 
 	private EditText name;
 	private EditText weeklyKM;
+	private WebView webView; 
+	private EditText veces;
 	private EditText currentKmCount;
 
 	private CheckBox cb1;
@@ -37,14 +44,13 @@ public class AddVehicleActivity extends Activity {
 	private EditText km2;
 	private EditText km3;
 
-	@SuppressWarnings("unused")
-	private Button addVehicleButton;
-
 	private Principal instancia;
 	
 	ArrayList<Maintenance> a;
+	
+	private double d;
 
-	@Override
+	@SuppressLint("SetJavaScriptEnabled") @Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
@@ -55,11 +61,22 @@ public class AddVehicleActivity extends Activity {
 		getActionBar().setTitle("Agregar vehículo");
 
 		instancia = Principal.darInstancia(getApplicationContext());
-
+		d=-1;
+		
 		name = (EditText)findViewById(R.id.nombre_vehiculo);
-		weeklyKM =(EditText)findViewById(R.id.km_semanales_vehiculo);
 		currentKmCount = (EditText)findViewById(R.id.km_actual_vehiculo);
-
+		
+		webView = (WebView)findViewById(R.id.webView1);
+		webView.getSettings().setJavaScriptEnabled(true);
+		webView.addJavascriptInterface(new JSInterface(this), "Android");
+		webView.loadUrl("file:///android_asset/mapBogota.html");
+		
+		veces = (EditText)findViewById(R.id.veces_por_semana);
+		veces.setText(""+1);
+		veces.setOnEditorActionListener(this);
+		
+		weeklyKM =(EditText)findViewById(R.id.km_semanales_vehiculo);
+		
 		cb1 = (CheckBox)findViewById(R.id.checkBox1);
 		cb2 = (CheckBox)findViewById(R.id.checkBox2);
 		cb3 = (CheckBox)findViewById(R.id.checkBox3);
@@ -82,8 +99,6 @@ public class AddVehicleActivity extends Activity {
 		km1 = (EditText)findViewById(R.id.km1);
 		km2 = (EditText)findViewById(R.id.km2);
 		km3 = (EditText)findViewById(R.id.km3);
-
-		addVehicleButton = (Button)findViewById(R.id.addVehicleButton);
 	}
 
 	public void onCheckbox1Clicked(View checkBox){
@@ -96,6 +111,21 @@ public class AddVehicleActivity extends Activity {
 		km3.setEnabled(((CheckBox) checkBox).isChecked());
 	}
 
+	public void setRouteDistance(final double distance){
+		d=distance;
+		runOnUiThread(new Runnable() {
+		
+			@Override
+			public void run() {
+				System.out.println("Entra a setRouteDistance");
+				weeklyKM.setText(""+(Double.parseDouble(veces.getText().toString())*distance/1000));
+				weeklyKM.setEnabled(false);
+				System.out.println("distancia ingresada: "+distance);
+			}
+		});
+		
+	}
+	
 	public void tryAddVehicle(View view){
 		String vName = name.getText().toString();
 		if(vName == null || vName.trim().equals("")){
@@ -104,7 +134,7 @@ public class AddVehicleActivity extends Activity {
 			try{
 				int vCurrentKmCount = Integer.parseInt(currentKmCount.getText().toString());
 				try{
-					int vWeeklyKM = Integer.parseInt(weeklyKM.getText().toString());
+					double vWeeklyKM = Double.parseDouble(weeklyKM.getText().toString());
 					
 					ArrayList<Record> r = new ArrayList<Record>();
 					if(cb1.isChecked()){
@@ -179,5 +209,19 @@ public class AddVehicleActivity extends Activity {
 		AlertDialog dialog= alertDialog.create();
 		dialog.show();
 
+	}
+
+	@Override
+	public boolean onEditorAction(TextView v, int arg1, KeyEvent arg2) {
+		if(v.getId() == R.id.veces_por_semana){
+			
+			if(weeklyKM.getText().toString() != null && d!=-1){
+				setRouteDistance(d);
+			}
+			
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

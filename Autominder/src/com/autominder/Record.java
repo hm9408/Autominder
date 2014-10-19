@@ -9,7 +9,7 @@ public class Record implements Serializable{
 	
 	private double cost;
 	private String nombreTaller;
-	private int kmPassedSince;
+	private double kmPassedSince;
 	private String maintenanceName;
 	private Date fecha;
 	
@@ -30,11 +30,11 @@ public class Record implements Serializable{
 		return nombreTaller;
 	}
 
-	public int getKmPassedSince() {
+	public double getKmPassedSince() {
 		return kmPassedSince;
 	}
 
-	public void setKmPassedSince(int kmPassedSince) {
+	public void setKmPassedSince(double kmPassedSince) {
 		this.kmPassedSince = kmPassedSince;
 	}
 
