@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -70,7 +71,21 @@ public class AddVehicleActivity extends Activity implements OnEditorActionListen
 		webView.getSettings().setJavaScriptEnabled(true);
 		webView.addJavascriptInterface(new JSInterface(this), "Android");
 		webView.loadUrl("file:///android_asset/mapBogota.html");
-		
+		webView.setOnTouchListener(new View.OnTouchListener() {
+
+		    @Override
+		    public boolean onTouch(View v, MotionEvent event) {                     
+
+		        if(event.getAction()==MotionEvent.ACTION_UP){
+		            webView.getParent().requestDisallowInterceptTouchEvent(false);
+
+		        }else                                   
+		            webView.getParent().requestDisallowInterceptTouchEvent(true);
+
+		        return false;
+		    }
+
+		});
 		veces = (EditText)findViewById(R.id.veces_por_semana);
 		veces.setText(""+1);
 		veces.setOnEditorActionListener(this);
