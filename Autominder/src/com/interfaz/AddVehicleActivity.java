@@ -161,7 +161,14 @@ public class AddVehicleActivity extends Activity implements OnEditorActionListen
 							showDialog("Kilometraje de registro inválido", "Por favor, ingresa hace cuántos kilometros realizaste el mantenimiento '"+a.get(0).getNombre()+"'");
 						}
 					}else{
-						a.remove(0);
+						for (int i = 0; i < a.size(); i++) {
+							Maintenance m = a.get(i);
+							if(m.getNombre().equalsIgnoreCase("aceite")){
+								a.remove(i);
+								break;
+							}
+							
+						}
 					}
 					
 					if(cb2.isChecked()){
@@ -173,7 +180,14 @@ public class AddVehicleActivity extends Activity implements OnEditorActionListen
 							showDialog("Kilometraje de registro inválido", "Por favor, ingresa hace cuántos kilometros realizaste el mantenimiento '"+a.get(1).getNombre()+"'");
 						}
 					}else{
-						a.remove(1);
+						for (int i = 0; i < a.size(); i++) {
+							Maintenance m = a.get(i);
+							if(m.getNombre().equalsIgnoreCase("llantas")){
+								a.remove(i);
+								break;
+							}
+							
+						}
 					}
 					
 					if(cb3.isChecked()){
@@ -185,7 +199,14 @@ public class AddVehicleActivity extends Activity implements OnEditorActionListen
 							showDialog("Kilometraje de registro inválido", "Por favor, ingresa hace cuántos kilometros realizaste el mantenimiento '"+a.get(2).getNombre()+"'");
 						}
 					}else{
-						a.remove(2);
+						for (int i = 0; i < a.size(); i++) {
+							Maintenance m = a.get(i);
+							if(m.getNombre().equalsIgnoreCase("frenos")){
+								a.remove(i);
+								break;
+							}
+							
+						}
 					}
 					
 					System.out.println("NUmero de mantenimientos:"+a.size());
