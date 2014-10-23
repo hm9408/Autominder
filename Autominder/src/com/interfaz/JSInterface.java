@@ -4,12 +4,12 @@ import android.webkit.JavascriptInterface;
 
 public class JSInterface {
 
-	AddVehicleActivity ava;
+	JSInterfaceActivity ava;
 	
-	public JSInterface(AddVehicleActivity addVehicleActivity) {
-		ava = addVehicleActivity;
+	public JSInterface(JSInterfaceActivity jsia) {
+		ava = jsia;
 	}
-	
+
 	@JavascriptInterface
 	public void recieveDistance(String distance){
 		ava.setRouteDistance(Double.parseDouble(distance));

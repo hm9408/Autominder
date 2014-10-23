@@ -13,6 +13,7 @@ import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -24,6 +25,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.autominder.ConexionCliente;
 import com.autominder.NotificationService;
 import com.autominder.Principal;
 import com.autominder.R;
@@ -63,19 +65,27 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	 */
 	ViewPager mViewPager;
 
-
+	ConexionCliente c;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		instancia = Principal.darInstancia(this);
-		if (instancia.getVehiculos().isEmpty()) {
-			Intent i = new Intent(this, AddVehicleActivity.class);
-			startActivityForResult(i, 666);
-		}
-		alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+		c = new ConexionCliente(this);
 
+		if (instancia.getUsername() == null) {//primera vez que abre la app
+			Intent i = new Intent(this, LoginActivity.class);
+			startActivityForResult(i, 111);
+		}else{
+			hacertodo();
+		}
+	}
+	
+	private void hacertodo(){
+
+		alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
+		
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
@@ -99,19 +109,20 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			}
 		});
 
-		// For each of the sections in the app, add a tab to the action bar.
-		for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-			// Create a tab with text corresponding to the page title defined by
-			// the adapter. Also specify this Activity object, which implements
-			// the TabListener interface, as the callback (listener) for when
-			// this tab is selected.
-			actionBar.addTab(actionBar.newTab()
-					.setText(mSectionsPagerAdapter.getPageTitle(i))
-					.setTabListener(this)
-					);
-		}
-
-
+		if (actionBar.getNavigationItemCount() == 0) {
+			// For each of the sections in the app, add a tab to the action bar.
+			for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+				// Create a tab with text corresponding to the page title defined by
+				// the adapter. Also specify this Activity object, which implements
+				// the TabListener interface, as the callback (listener) for when
+				// this tab is selected.
+				actionBar.addTab(actionBar.newTab()
+						.setText(mSectionsPagerAdapter.getPageTitle(i))
+						.setTabListener(this)
+						);
+			}
+		}	
+		
 		crearNotificationService();
 
 		mTitle = mDrawerTitle = getTitle();
@@ -219,20 +230,64 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		}
 		
 	}
+	
+	public void pushCambios(){
+		c.datosPush(instancia.getUsername(), instancia.getPassword());		
+	}
 
 	protected void onActivityResult(int requestCode, int resultCode,
 			Intent data) {
 		if(requestCode == 666){//vuelve de AddVehicleActivity
 			if(resultCode == RESULT_OK){
+				new AsyncTask<Void, Void, Void>(){
+					@Override
+					protected Void doInBackground(Void... p)
+					{
+						pushCambios();
+						return null;
+					}
+				}.execute();
+				
+				hacertodo();
+				
 				adapter.notifyDataSetChanged();
 				instancia.setSelected(instancia.getVehiculos().get(instancia.getVehiculos().size()-1));
 				getActionBar().setTitle(instancia.getSelected().getName());
 				crearNotificationService();
+				forzarRefresh(1);
+				
 			}
 		}else if(requestCode == 999){//vuelve de PendingRemindersActivity
 			if(resultCode == RESULT_OK){
+				new AsyncTask<Void, Void, Void>(){
+					@Override
+					protected Void doInBackground(Void... p)
+					{
+						pushCambios();
+						return null;
+					}
+					@Override
+					protected void onPostExecute(Void result)
+					{
+						getActionBar().setTitle(instancia.getSelected().getName());
+						crearNotificationService();
+					}
+				}.execute();
+			}
+		}
+		else if(requestCode == 111){//vuelve de Login
+			if(instancia.getVehiculos().isEmpty()){//significa que registro un nuevo usuario
+				System.out.println("llega de registrar usuario");
+				Intent i = new Intent(this, AddVehicleActivity.class);
+				startActivityForResult(i, 666);
+			}else{//significa que hizo login y pull de sus datos
+				hacertodo();
+				
+				adapter.notifyDataSetChanged();
+				instancia.setSelected(instancia.getVehiculos().get(instancia.getVehiculos().size()-1));
 				getActionBar().setTitle(instancia.getSelected().getName());
 				crearNotificationService();
+				
 			}
 		}
 	}

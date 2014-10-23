@@ -5,6 +5,7 @@ import com.autominder.R;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -69,10 +70,23 @@ public class FragmentoRecords extends Fragment implements OnClickListener{
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == 888){
 			if(resultCode == getActivity().RESULT_OK){
-				getActivity().getActionBar().setTitle(p.getSelected().getName());
-				//la siguiente linea funciona
-				//Toast.makeText(getActivity(), "Volvio al FragmentoRecords!", Toast.LENGTH_SHORT).show();
-				((MainActivity)getActivity()).crearNotificationService();
+
+				new AsyncTask<Void, Void, Void>(){
+					@Override
+					protected Void doInBackground(Void... p)
+					{
+						((MainActivity)getActivity()).pushCambios();
+						return null;
+					}
+					@Override
+					protected void onPostExecute(Void result)
+					{
+						getActivity().getActionBar().setTitle(p.getSelected().getName());
+						//la siguiente linea funciona
+						//Toast.makeText(getActivity(), "Volvio al FragmentoRecords!", Toast.LENGTH_SHORT).show();
+						((MainActivity)getActivity()).crearNotificationService();
+					}
+				}.execute();
 			}
 		}
 	}

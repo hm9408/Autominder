@@ -36,6 +36,9 @@ public class Principal implements Serializable{
 	private ArrayList<Maintenance> mantenimientos;
 	
 	private Vehicle selected;
+	
+	private String username;
+	private String password;
 
 	public Principal(Context context) {
 
@@ -45,12 +48,15 @@ public class Principal implements Serializable{
 			vehiculos = new ArrayList<Vehicle>();
 		}
 		if (mantenimientos==null) {
-			mantenimientos = cargarMantenimientosIniciales();
+			cargarMantenimientosIniciales();
 			
 		}
 		
 	}
 
+	/**
+	 * retorna los mantenimientos iniciales pero tambien los asigna automaticamente a las lista de mantenimientos
+	 */
 	public ArrayList<Maintenance> cargarMantenimientosIniciales() {
 		try {
 			ArrayList<Maintenance> a = new ArrayList<Maintenance>();
@@ -75,17 +81,15 @@ public class Principal implements Serializable{
 					a.add(m);
 				}
 			}
+			mantenimientos = a;
 			return a;
 		} catch (SAXException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -106,6 +110,10 @@ public class Principal implements Serializable{
 			System.out.println("cargados "+mantenimientos.size()+" mantenimientos");
 			selected = vehiculos.get(0);
 			System.out.println("cargado selected: "+selected.getName());
+			username = (String) ois.readObject();
+			System.out.println("cargado username: "+username);
+			password = (String) ois.readObject();
+			System.out.println("cargado password: "+password);
 			ois.close();
 			fis.close();
 		} catch (StreamCorruptedException e1) {
@@ -156,6 +164,8 @@ public class Principal implements Serializable{
 			ObjectOutputStream oos = new ObjectOutputStream(fos);
 			oos.writeObject(vehiculos);
 			oos.writeObject(mantenimientos);
+			oos.writeObject(username);
+			oos.writeObject(password);
 			oos.close();
 			fos.close();	
 			System.out.println("Saved "+vehiculos.size()+" vehicles.");	
@@ -219,5 +229,21 @@ public class Principal implements Serializable{
 			}
 		}
 		
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

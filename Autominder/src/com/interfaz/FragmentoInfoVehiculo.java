@@ -3,6 +3,7 @@ package com.interfaz;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -77,10 +78,22 @@ public class FragmentoInfoVehiculo extends Fragment implements OnClickListener {
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		if(requestCode == 777){//viene de edit
 			if(resultCode == getActivity().RESULT_OK){
-				getActivity().getActionBar().setTitle(instancia.getSelected().getName());
-				//la siguiente linea funciona
-				Toast.makeText(getActivity(), "editVehicle Volvio al FragmentoInfoVehiculo!", Toast.LENGTH_SHORT).show();
-				((MainActivity)getActivity()).crearNotificationService();
+				new AsyncTask<Void, Void, Void>(){
+					@Override
+					protected Void doInBackground(Void... p)
+					{
+						((MainActivity)getActivity()).pushCambios();
+						return null;
+					}
+					@Override
+					protected void onPostExecute(Void result)
+					{
+						getActivity().getActionBar().setTitle(instancia.getSelected().getName());
+						//la siguiente linea funciona
+						Toast.makeText(getActivity(), "editVehicle Volvio al FragmentoInfoVehiculo!", Toast.LENGTH_SHORT).show();
+						((MainActivity)getActivity()).crearNotificationService();
+					}
+				}.execute();
 			}
 		}
 	}

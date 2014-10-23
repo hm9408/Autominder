@@ -13,7 +13,6 @@ public class Vehicle implements Serializable{
 	private static final long serialVersionUID = -7614135801653779184L;
 
 	private String name;
-	private boolean favorite;
 	/**
 	 * es un numero que indica el numero de kilometros SEMANALES
 	 */
@@ -40,20 +39,12 @@ public class Vehicle implements Serializable{
 		this.name = name;
 	}
 
-	public void setFavorite(boolean favorite) {
-		this.favorite = favorite;
-	}
-
 	public ArrayList<Maintenance> getMaintenances() {
 		return maintenances;
 	}
 
 	public String getName() {
 		return name;
-	}
-
-	public boolean isFavorite() {
-		return favorite;
 	}
 
 	public double getWeeklyKM() {

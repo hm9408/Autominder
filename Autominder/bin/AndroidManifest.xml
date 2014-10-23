@@ -30,6 +30,7 @@
         <activity android:name="com.interfaz.newRecordActivity"></activity>
         <activity android:name="com.interfaz.PendingRemindersActivity"></activity>
         <activity android:name="com.interfaz.EditMaintenanceActivity"></activity>
+        <activity android:name="com.interfaz.LoginActivity"></activity>
     </application>
 
 </manifest>

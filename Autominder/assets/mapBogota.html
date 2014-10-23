@@ -18,6 +18,7 @@
       var marker2;
       var ruta;
       var distancia;
+      var responseGuardada;
       function initialize() {
         var mapOptions = {
           center: { lat: 4.680, lng: -74.080},
@@ -54,7 +55,8 @@
         });
 
         google.maps.event.addListener(directionsDisplay, 'directions_changed', function() {
-          computeTotalDistance(directionsDisplay.getDirections());
+          responseGuardada = directionsDisplay.getDirections();
+          computeTotalDistance(responseGuardada);
         });
       }
 
@@ -82,7 +84,8 @@
         marker2.setMap(null);
         directionsService.route(request, function(response, status) {
           if (status == google.maps.DirectionsStatus.OK) {
-            directionsDisplay.setDirections(response);
+            responseGuardada = response;
+            directionsDisplay.setDirections(responseGuardada);
           }
         });
       }

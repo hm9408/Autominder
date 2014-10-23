@@ -13,7 +13,7 @@ public class Record implements Serializable{
 	private String maintenanceName;
 	private Date fecha;
 	
-	public Record(double cost, String nombreTaller, int kmPassedSince,
+	public Record(double cost, String nombreTaller, double kmPassedSince,
 			String maintenanceName, Date fecha) {
 		this.cost = cost;
 		this.nombreTaller = nombreTaller;

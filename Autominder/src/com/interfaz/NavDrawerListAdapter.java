@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class NavDrawerListAdapter extends BaseAdapter {
 
@@ -90,9 +92,21 @@ public class NavDrawerListAdapter extends BaseAdapter {
 						instancia.deleteVehicle(vehicle);
 						instancia.saveState();
 
-						ma.forzarRefresh(1);
-						ma.refreshDrawer();
-						ma.crearNotificationService();
+						new AsyncTask<Void, Void, Void>(){
+							@Override
+							protected Void doInBackground(Void... p)
+							{
+								ma.pushCambios();
+								return null;
+							}
+							@Override
+							protected void onPostExecute(Void result)
+							{
+								ma.forzarRefresh(1);
+								ma.refreshDrawer();
+								ma.crearNotificationService();
+							}
+						}.execute();
 						
 						break;
 

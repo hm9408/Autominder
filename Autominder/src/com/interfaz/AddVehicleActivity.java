@@ -17,15 +17,13 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
-public class AddVehicleActivity extends Activity implements OnEditorActionListener {
+public class AddVehicleActivity extends Activity implements OnEditorActionListener, JSInterfaceActivity {
 
 	private EditText name;
 	private EditText weeklyKM;

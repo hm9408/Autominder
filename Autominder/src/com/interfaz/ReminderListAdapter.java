@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -113,8 +114,20 @@ public class ReminderListAdapter extends BaseAdapter {
 							instancia.saveState();
 
 							if (ma != null){
-								ma.forzarRefresh(2);
-								ma.crearNotificationService();
+								new AsyncTask<Void, Void, Void>(){
+									@Override
+									protected Void doInBackground(Void... p)
+									{
+										ma.pushCambios();
+										return null;
+									}
+									@Override
+									protected void onPostExecute(Void result)
+									{
+										ma.forzarRefresh(2);
+										ma.crearNotificationService();
+									}
+								}.execute();
 							}
 							
 							if(pra != null){

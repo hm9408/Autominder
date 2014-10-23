@@ -106,6 +106,7 @@ public class AddMaintenanceActivity extends Activity implements OnItemSelectedLi
 					
 					//Muestra el EditText del custom name
 					editCustomName.setVisibility(View.VISIBLE);
+					editCustomName.setEnabled(true);
 					
 					//borrar vista de T
 					layoutTime.setVisibility(View.GONE);
@@ -287,16 +288,6 @@ public class AddMaintenanceActivity extends Activity implements OnItemSelectedLi
 		}
 	}
 
-	public long getTime() {
-		String a = spinPeriod.getSelectedItem().toString();
-		long b=0;
-		if (a.equals("Cada año")) {
-			b= 31536000000L;
-		} else if(a.equals("Cada seis meses")) {
-			b= 15768000000L;
-		}
-		return b;
-	}
 
 	private int getSelectedMaintenanceType() {
 		return criteria.isChecked()?Maintenance.SEGUN_TIEMPO:Maintenance.SEGUN_KM;
@@ -356,7 +347,7 @@ public class AddMaintenanceActivity extends Activity implements OnItemSelectedLi
 	}
 	
 	public void showDatePickerDialog(View view){
-		Calendar c = Calendar.getInstance();
+		Calendar c = Calendar.getInstance();	
 		int year = c.get(Calendar.YEAR);
 		int month = c.get(Calendar.MONTH);
 		int day = c.get(Calendar.DAY_OF_MONTH);
