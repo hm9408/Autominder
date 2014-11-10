@@ -276,7 +276,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			}
 		}
 		else if(requestCode == 111){//vuelve de Login
-			if(instancia.getVehiculos().isEmpty()){//significa que registro un nuevo usuario
+			if(instancia.getUsername() == null){//significa que desea seguir offline, sin hacer login
+				System.out.println("llega de avanzar sin login");
+				Intent i = new Intent(this, AddVehicleActivity.class);
+				startActivityForResult(i, 666);
+			}else if(instancia.getVehiculos().isEmpty()){//significa que registro un nuevo usuario
 				System.out.println("llega de registrar usuario");
 				Intent i = new Intent(this, AddVehicleActivity.class);
 				startActivityForResult(i, 666);

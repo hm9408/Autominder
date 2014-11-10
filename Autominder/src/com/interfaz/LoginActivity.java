@@ -77,7 +77,12 @@ public class LoginActivity extends Activity{
 						}
 					}.execute();
 				}else{
-					showDialog("Login incorrecto", "Intenete nuevamente, o ingrese como nuevo usuario");
+					if (c.isOnline()) {
+						showDialog("Login incorrecto", "Intente nuevamente, o ingrese como nuevo usuario");
+					}else{
+						showDialog("Sin conexión", "Revise sus configuraciones de red e intenete nuevamente");
+					}
+					
 				}
 			}
 		}.execute();
@@ -85,22 +90,32 @@ public class LoginActivity extends Activity{
 	}
 
 	public void newUser(View view){
-		new AsyncTask<Void, Void, Void>(){
+		new AsyncTask<Void, Void, Boolean>(){
 
 			@Override
-			protected Void doInBackground(Void... params) {
-				c.RegistrarLogin(login.getText().toString(), contrasena.getText().toString());
-				
-				return null;
+			protected Boolean doInBackground(Void... params) {
+				return c.RegistrarLogin(login.getText().toString(), contrasena.getText().toString());
 			}
-			protected void onPostExecute(Void result) {
-				System.out.println("registro exitoso, aparentemente");
-				instancia.setUsername(login.getText().toString());
-				instancia.setPassword(contrasena.getText().toString());
-				finish();
+			protected void onPostExecute(Boolean result) {
+				if(result.booleanValue()){
+					System.out.println("registro exitoso, aparentemente");
+					instancia.setUsername(login.getText().toString());
+					instancia.setPassword(contrasena.getText().toString());
+					finish();
+				}else{
+					showDialog("Sin conexión", "Revise sus configuraciones de red e intenete nuevamente");
+				}
+				
 			};
 		}.execute();
 		
+	}
+	
+	public void goOffline(View view){
+		System.out.println("Opcion avanzar offline");
+		instancia.setUsername(null);
+		instancia.setPassword(null);
+		finish();
 	}
 
 	private void showDialog(String title, String message) {

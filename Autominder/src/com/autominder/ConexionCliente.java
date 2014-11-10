@@ -12,6 +12,8 @@ import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 
 public class ConexionCliente {
@@ -22,35 +24,40 @@ public class ConexionCliente {
 
 	private BufferedReader in;
 
-	public static final String IP = "192.168.0.18";
+	public static final String IP = "157.253.222.246";
 	public static final int PUERTO = 9999;
 	private Context context;
-	private boolean conexionTerminada;
 
 	public ConexionCliente(Context context) {
 		this.context = context;
-		conexionTerminada = false;
 	}
 
-	private void conectar()
+	private boolean conectar()
 	{
-		
-		try {
-			System.out.println("CREANDO SOCKET");
-			socket = new Socket(IP, PUERTO);
-			System.out.println("Is the Socket null? " + socket==null);
-			out = new PrintWriter(socket.getOutputStream(), true);
-			System.out.println("Is the OutputStream null? " + out==null);			
-			in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			System.out.println("Is the InputStreamReader null? " + in==null);
-			System.out.println("Conexión establecida con el servidor de manera exitosa");
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if(isOnline()){
+			try {
+				System.out.println("CREANDO SOCKET");
+				socket = new Socket(IP, PUERTO);
+				System.out.println("Is the Socket null? " + socket==null);
+				out = new PrintWriter(socket.getOutputStream(), true);
+				System.out.println("Is the OutputStream null? " + out==null);			
+				in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				System.out.println("Is the InputStreamReader null? " + in==null);
+				System.out.println("Conexión establecida con el servidor de manera exitosa");
+				return true;
+			} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				return false;
+			}
+		}else{
+			return false;
 		}
+		
 	
 	}
 	private void desconectar(){
@@ -71,22 +78,26 @@ public class ConexionCliente {
 
 	}
 
+	/**
+	 * @return false si el login es incorrecto, o si no hay conexion; true de lo contrario
+	 */
 	public boolean verificarLogin(String username, String password) {
 		
 		try {
-			conectar();
-			
-			String res ="AUT##"+username+"##"+password;
-			System.out.println("Mensaje: "+res);
-			System.out.println("PrintWriter es nulo?" + out==null);
-			out.println(res);
-			String comando = in.readLine();
-			System.out.println(comando);
-			if(comando.contains("OK")){
+			if (username != null && password != null && conectar()) {
+				String res = "AUT##" + username + "##" + password;
+				System.out.println("Mensaje: " + res);
+				System.out.println("PrintWriter es nulo?" + out == null);
+				out.println(res);
+				String comando = in.readLine();
+				System.out.println(comando);
 				desconectar();
-				return true;
+				if (comando.contains("OK")) {
+					return true;
+				} else {
+					return false;
+				}
 			}else{
-				desconectar();
 				return false;
 			}
 		} catch (IOException e) {
@@ -96,68 +107,92 @@ public class ConexionCliente {
 		return false;
 	}
 	
-	public void RegistrarLogin(String username, String password) {
+	/**
+	 * @return false si no hay conexion, true de lo contrario
+	 */
+	public boolean RegistrarLogin(String username, String password) {
 		
-		conectar();
-		
-		String res ="REGISTRO##"+username+"##"+password;
-		System.out.println("Mensaje: "+res);
-		System.out.println("PrintWriter es nulo?" + out==null);
-		out.println(res);
-		
-		desconectar();
-	}
-
-
-	@SuppressLint("SimpleDateFormat")
-	public void datosPull(String username, String password) {
-		try {
-			conectar();
-			
-			String res ="DATOSPULL##"+username+"##"+password;
+		if(username != null && password != null && conectar()){
+			String res ="REGISTRO##"+username+"##"+password;
 			System.out.println("Mensaje: "+res);
 			System.out.println("PrintWriter es nulo?" + out==null);
 			out.println(res);
-			String comando = in.readLine();
-			System.out.println(comando);
-			while(!comando.equals("FIN")){
-				
-				while(comando.startsWith("VEH")){//recibe un vehiculo
-					String[] veh = comando.split("##");
-					
-					ArrayList<Maintenance>maintenances = new ArrayList<Maintenance>();
-					comando = in.readLine();
-					System.out.println(comando);
-					while(comando.startsWith("MAN")) {
-						String[] man = comando.split("##");
-						Maintenance mAct = new Maintenance(Integer.parseInt(man[1]), man[2], Integer.parseInt(man[3]), Long.parseLong(man[4]));
-						maintenances.add(mAct);
+			
+			desconectar();
+			return true;
+		}else{
+			return false;
+		}
+		
+		
+	}
+
+	/**
+	 * Hace pull de los datos, y los agrega a la instancia, asi como caragr los mantenimientos iniciales.<br>
+	 * Sólo funciona cuando hay conexion de red y el nombre de usuario y contraseña son diferentes de null
+	 * @param username
+	 * @param password
+	 */
+	@SuppressLint("SimpleDateFormat")
+	public void datosPull(String username, String password) {
+		try {
+			
+			if (username != null && password != null && conectar()) {
+				String res = "DATOSPULL##" + username + "##" + password;
+				System.out.println("Mensaje: " + res);
+				System.out.println("PrintWriter es nulo?" + out == null);
+				out.println(res);
+				String comando = in.readLine();
+				System.out.println(comando);
+				while (!comando.equals("FIN")) {
+
+					while (comando.startsWith("VEH")) {//recibe un vehiculo
+						String[] veh = comando.split("##");
+
+						ArrayList<Maintenance> maintenances = new ArrayList<Maintenance>();
 						comando = in.readLine();
 						System.out.println(comando);
+						while (comando.startsWith("MAN")) {
+							String[] man = comando.split("##");
+							Maintenance mAct = new Maintenance(
+									Integer.parseInt(man[1]), man[2],
+									Integer.parseInt(man[3]),
+									Long.parseLong(man[4]));
+							maintenances.add(mAct);
+							comando = in.readLine();
+							System.out.println(comando);
+						}
+
+						ArrayList<Record> records = new ArrayList<Record>();
+						while (comando.startsWith("REC")) {
+							String[] rec = comando.split("##");
+							Record rAct = new Record(
+									Double.parseDouble(rec[1]), rec[2],
+									Double.parseDouble(rec[3]), rec[4],
+									new SimpleDateFormat("dd-MM-yyyy")
+											.parse(rec[5]));
+							records.add(rAct);
+							comando = in.readLine();
+							System.out.println(comando);
+						}
+
+						Vehicle vAct = new Vehicle(veh[1],
+								Double.parseDouble(veh[2]),
+								Integer.parseInt(veh[3]), maintenances, records);
+						System.out.println("se hizo pull del vehiculo '"
+								+ vAct.getName() + "'");
+						boolean a = Principal.darInstancia(context).addVehicle(
+								vAct);
+						System.out.println(a ? "se guardo el vehiculo"
+								: "no se guardo el vehiculo; nombre repetido");
+
 					}
-					
-					ArrayList<Record>records = new ArrayList<Record>();
-					while (comando.startsWith("REC")) {
-						String[] rec = comando.split("##");
-						Record rAct = new Record(Double.parseDouble(rec[1]), rec[2], Double.parseDouble(rec[3]), rec[4], new SimpleDateFormat("dd-MM-yyyy").parse(rec[5]));
-						records.add(rAct);
-						comando = in.readLine();
-						System.out.println(comando);
-					}
-					
-					Vehicle vAct = new Vehicle(veh[1], Double.parseDouble(veh[2]), Integer.parseInt(veh[3]), maintenances, records);
-					System.out.println("se hizo pull del vehiculo '"+vAct.getName()+"'");
-					boolean a = Principal.darInstancia(context).addVehicle(vAct);
-					System.out.println(a?"se guardo el vehiculo":"no se guardo el vehiculo; nombre repetido");
 
 				}
-				
+				desconectar();
+				//carga los mantenimientos del XML tambien
+				Principal.darInstancia(context).cargarMantenimientosIniciales();
 			}
-			desconectar();
-			//carga los mantenimientos del XML tambien
-			Principal.darInstancia(context).cargarMantenimientosIniciales();
-			
-		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -171,41 +206,66 @@ public class ConexionCliente {
 		
 	}
 	
-	public Boolean datosPush(String username, String password){
-		conectar();
-		
-		String res ="DATOSPUSH##"+username+"##"+password;
-		System.out.println("Mensaje: "+res);
-		System.out.println("PrintWriter es nulo?" + out==null);
-		out.println(res);
-		
-		Principal p = Principal.darInstancia(context);
-		String respuesta = null;
-		for (int i = 0; i < p.getVehiculos().size(); i++) {
-			Vehicle vAct = p.getVehiculos().get(i);
-			respuesta = "VEH##"+vAct.getName()+"##"+vAct.getWeeklyKM()+"##"+vAct.getCurrentKmCount();
+	/**
+	 * Hace push de los datos al servidor.<br>
+	 * solo funciona cuando hay conexion de red y el username y password son diferentes de null.
+	 * @param username
+	 * @param password
+	 */
+	@SuppressLint("SimpleDateFormat")
+	public void datosPush(String username, String password){
+
+		if (username != null && password != null && conectar()) {
+			String res = "DATOSPUSH##" + username + "##" + password;
+			System.out.println("Mensaje: " + res);
+			System.out.println("PrintWriter es nulo?" + out == null);
+			out.println(res);
+			Principal p = Principal.darInstancia(context);
+			String respuesta = null;
+			for (int i = 0; i < p.getVehiculos().size(); i++) {
+				Vehicle vAct = p.getVehiculos().get(i);
+				respuesta = "VEH##" + vAct.getName() + "##"
+						+ vAct.getWeeklyKM() + "##" + vAct.getCurrentKmCount();
+				System.out.println(respuesta);
+				out.println(respuesta);
+				for (int j = 0; j < vAct.getMaintenances().size(); j++) {
+					Maintenance mAct = vAct.getMaintenances().get(j);
+					respuesta = "MAN##" + mAct.getType() + "##"
+							+ mAct.getNombre() + "##" + mAct.getKm() + "##"
+							+ mAct.getTiempo();
+					System.out.println(respuesta);
+					out.println(respuesta);
+				}
+				for (int j = 0; j < vAct.getRecords().size(); j++) {
+					Record rAct = vAct.getRecords().get(j);
+					respuesta = "REC##"
+							+ rAct.getCost()
+							+ "##"
+							+ rAct.getNombreTaller()
+							+ "##"
+							+ rAct.getKmPassedSince()
+							+ "##"
+							+ rAct.getMaintenanceName()
+							+ "##"
+							+ new SimpleDateFormat("dd-MM-yyyy").format(rAct
+									.getFecha());
+					System.out.println(respuesta);
+					out.println(respuesta);
+				}
+			}
+			respuesta = "FIN";
 			System.out.println(respuesta);
 			out.println(respuesta);
-			for (int j = 0; j < vAct.getMaintenances().size(); j++) {
-				Maintenance mAct = vAct.getMaintenances().get(j);
-				respuesta = "MAN##"+mAct.getType()+"##"+mAct.getNombre()+"##"+mAct.getKm()+"##"+mAct.getTiempo();
-				System.out.println(respuesta);
-				out.println(respuesta);
-			}
-			for (int j = 0; j < vAct.getRecords().size(); j++) {
-				Record rAct = vAct.getRecords().get(j);
-				respuesta = "REC##"+rAct.getCost()+"##"+rAct.getNombreTaller()+"##"+rAct.getKmPassedSince()+"##"+rAct.getMaintenanceName()+"##"+new SimpleDateFormat("dd-MM-yyyy").format(rAct.getFecha());
-				System.out.println(respuesta);
-				out.println(respuesta);
-			}
+			desconectar();
 		}
 		
-		respuesta = "FIN";
-		System.out.println(respuesta);
-		out.println(respuesta);
-		
-		desconectar();
-		return false;
+	}
+	
+	@SuppressWarnings("static-access")
+	public boolean isOnline() {
+	    ConnectivityManager cm =(ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
+	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
+	    return netInfo != null && netInfo.isConnectedOrConnecting();
 	}
 }
 //	protected void reportar(String... a) {
