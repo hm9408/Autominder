@@ -24,7 +24,7 @@ public class ConexionCliente {
 
 	private BufferedReader in;
 
-	public static final String IP = "157.253.222.246";
+	public static final String IP = "192.168.1.2";
 	public static final int PUERTO = 9999;
 	private Context context;
 

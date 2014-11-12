@@ -7,12 +7,19 @@ import java.util.Locale;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlarmManager;
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
@@ -24,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.autominder.ConexionCliente;
 import com.autominder.NotificationService;
@@ -48,7 +56,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 
 
 	private NavDrawerListAdapter adapter;
-
+	private SensorManager mySensorManager;
 	AlarmManager alarmManager;
 
 	/**
@@ -67,6 +75,46 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 
 	ConexionCliente c;
 
+	//shake motion detection code respectfully taken from: http://androidcookbook.com/Recipe.seam?recipeId=529
+	private final SensorEventListener mySensorEventListener = new SensorEventListener() {
+
+		public void onSensorChanged(SensorEvent se) {
+			updateAccelParameters(se.values[0], se.values[1], se.values[2]);   // (1)
+			if ((!shakeInitiated) && isAccelerationChanged()) {                                      // (2) 
+				shakeInitiated = true; 
+			} else if ((shakeInitiated) && isAccelerationChanged()) {                              // (3)
+				executeShakeAction();
+			} else if ((shakeInitiated) && (!isAccelerationChanged())) {                           // (4)
+				shakeInitiated = false;
+			}
+		}
+
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+			/* can be ignored in this example */
+		}
+	};
+
+	/* Here we store the current values of acceleration, one for each axis */
+	private float xAccel;
+	private float yAccel;
+	private float zAccel;
+
+	/* And here the previous ones */
+	private float xPreviousAccel;
+	private float yPreviousAccel;
+	private float zPreviousAccel;
+
+	/* Used to suppress the first shaking */
+	private boolean firstUpdate = true;
+
+	/*What acceleration difference would we assume as a rapid movement? */
+	private final float shakeThreshold = 2.9f;
+
+	/* Has a shaking motion been started (one direction) */
+	private boolean shakeInitiated = false;
+
+
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -81,11 +129,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			hacertodo();
 		}
 	}
-	
+
 	private void hacertodo(){
 
 		alarmManager = (AlarmManager)getSystemService(ALARM_SERVICE);
-		
+
 		setContentView(R.layout.activity_main);
 
 		// Set up the action bar.
@@ -122,7 +170,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 						);
 			}
 		}	
-		
+
 		crearNotificationService();
 
 		mTitle = mDrawerTitle = getTitle();
@@ -181,8 +229,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		// on first time display view for first nav item
 		//displayView(0);
 		//}
-		
+
 		forzarRefresh(1);
+		
+		mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE); // (1)
+		mySensorManager.registerListener(mySensorEventListener, mySensorManager
+				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+				SensorManager.SENSOR_DELAY_NORMAL); // (2)
 
 	}
 
@@ -201,19 +254,19 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
 
 		ArrayList<Reminder> allReminders = instancia.obtenerReminders();
-//		/**
-//		 * se crea un arreglo de fechas y solo se genera una alarma si la fecha del 
-//		 * recordatorio respectivo no esta ya en el arreglo, finalmente se agrega la
-//		 * fecha. Esto con el fin de evitar mas de una alarma/notificacion en el mismo dia.
-//		 */
-//		ArrayList<Date> reminderDates = new ArrayList<Date>();
-//		for (int i = 0; i < allReminders.size(); i++) {
-//			Reminder r = allReminders.get(i);
-//			if(!reminderDates.contains(r.getFecha())){
-//				alarmManager.set(AlarmManager.RTC_WAKEUP, r.getFecha().getTime(), pendingIntent);
-//				reminderDates.add(r.getFecha());
-//			}
-//		}
+		//		/**
+		//		 * se crea un arreglo de fechas y solo se genera una alarma si la fecha del 
+		//		 * recordatorio respectivo no esta ya en el arreglo, finalmente se agrega la
+		//		 * fecha. Esto con el fin de evitar mas de una alarma/notificacion en el mismo dia.
+		//		 */
+		//		ArrayList<Date> reminderDates = new ArrayList<Date>();
+		//		for (int i = 0; i < allReminders.size(); i++) {
+		//			Reminder r = allReminders.get(i);
+		//			if(!reminderDates.contains(r.getFecha())){
+		//				alarmManager.set(AlarmManager.RTC_WAKEUP, r.getFecha().getTime(), pendingIntent);
+		//				reminderDates.add(r.getFecha());
+		//			}
+		//		}
 		/**
 		 * Se busca el reminder mas atrasado y se crea una unica alarma
 		 */
@@ -223,14 +276,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			if(earliest == null || r.getFecha().getTime()<earliest.getFecha().getTime()){
 				earliest = r;
 			}
-			
+
 		}
 		if(earliest != null){
 			alarmManager.setExact(AlarmManager.RTC_WAKEUP, earliest.getFecha().getTime(), pendingIntent);
 		}
-		
+
 	}
-	
+
 	public void pushCambios(){
 		c.datosPush(instancia.getUsername(), instancia.getPassword());		
 	}
@@ -247,15 +300,15 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 						return null;
 					}
 				}.execute();
-				
+
 				hacertodo();
-				
+
 				adapter.notifyDataSetChanged();
 				instancia.setSelected(instancia.getVehiculos().get(instancia.getVehiculos().size()-1));
 				getActionBar().setTitle(instancia.getSelected().getName());
 				crearNotificationService();
 				forzarRefresh(1);
-				
+
 			}
 		}else if(requestCode == 999){//vuelve de PendingRemindersActivity
 			if(resultCode == RESULT_OK){
@@ -286,12 +339,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 				startActivityForResult(i, 666);
 			}else{//significa que hizo login y pull de sus datos
 				hacertodo();
-				
+
 				adapter.notifyDataSetChanged();
 				instancia.setSelected(instancia.getVehiculos().get(instancia.getVehiculos().size()-1));
 				getActionBar().setTitle(instancia.getSelected().getName());
 				crearNotificationService();
-				
+
 			}
 		}
 	}
@@ -310,13 +363,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			mDrawerLayout.closeDrawers();
 		}
 	}
-	
+
 	public void forzarRefresh(int i){
 		mViewPager.setAdapter(mSectionsPagerAdapter);
 		getActionBar().setSelectedNavigationItem(i);
 		mViewPager.setCurrentItem(i);
 	}
-	
+
 	public void refreshDrawer(){
 		adapter.notifyDataSetChanged();
 	}
@@ -346,24 +399,24 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		switch(id){
 		case(R.id.add_vehicle):
 			Intent i = new Intent(this, AddVehicleActivity.class);
-			startActivityForResult(i, 666);
-			return true;
+		startActivityForResult(i, 666);
+		return true;
 		case(R.id.pending_reminders):
 			Intent in = new Intent(this, PendingRemindersActivity.class);
-			startActivityForResult(in, 999);
-			return true;
+		startActivityForResult(in, 999);
+		return true;
 		case android.R.id.home:
-	        if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
-	            mDrawerLayout.closeDrawer(mDrawerList);
-	        }
-	        else {
-	            mDrawerLayout.openDrawer(mDrawerList);
-	        }
-	        return true;
+			if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
+				mDrawerLayout.closeDrawer(mDrawerList);
+			}
+			else {
+				mDrawerLayout.openDrawer(mDrawerList);
+			}
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
-		
+
 	}
 
 	@Override
@@ -427,6 +480,60 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			}
 			return null;
 		}
+	}
+
+	//SHAKE METHODS
+	
+	/* Store the acceleration values given by the sensor */
+	private void updateAccelParameters(float xNewAccel, float yNewAccel,
+			float zNewAccel) {
+                /* we have to suppress the first change of acceleration, it results from first values being initialized with 0 */
+		if (firstUpdate) {  
+			xPreviousAccel = xNewAccel;
+			yPreviousAccel = yNewAccel;
+			zPreviousAccel = zNewAccel;
+			firstUpdate = false;
+		} else {
+			xPreviousAccel = xAccel;
+			yPreviousAccel = yAccel;
+			zPreviousAccel = zAccel;
+		}
+		xAccel = xNewAccel;
+		yAccel = yNewAccel;
+		zAccel = zNewAccel;
+	}
+	
+	/* If the values of acceleration have changed on at least two axises, we are probably in a shake motion */
+	private boolean isAccelerationChanged() {
+		float deltaX = Math.abs(xPreviousAccel - xAccel);
+		float deltaY = Math.abs(yPreviousAccel - yAccel);
+		float deltaZ = Math.abs(zPreviousAccel - zAccel);
+		return (deltaX > shakeThreshold && deltaY > shakeThreshold)
+				|| (deltaX > shakeThreshold && deltaZ > shakeThreshold)
+				|| (deltaY > shakeThreshold && deltaZ > shakeThreshold);
+	}
+	
+	private void executeShakeAction() {
+		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+		    @Override
+		    public void onClick(DialogInterface dialog, int which) {
+		        switch (which){
+		        case DialogInterface.BUTTON_POSITIVE:
+		            //Yes button clicked
+		        	Toast.makeText(getApplicationContext(), "Agite el dispositivo de nuevo para desactivarlo", Toast.LENGTH_LONG).show();
+		            mySensorManager.unregisterListener(mySensorEventListener);
+		        	break;
+
+		        case DialogInterface.BUTTON_NEGATIVE:
+		            //No button clicked
+		            break;
+		        }
+		    }
+		};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Desea activar el modo Vehículo?").setPositiveButton("Yes", dialogClickListener)
+		    .setNegativeButton("No", dialogClickListener).show();
 	}
 
 }
