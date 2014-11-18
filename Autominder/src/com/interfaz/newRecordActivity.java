@@ -3,22 +3,35 @@ package com.interfaz;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
+import android.app.PendingIntent;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.nfc.NdefMessage;
+import android.nfc.NdefRecord;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.NfcF;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
 import com.autominder.Maintenance;
 import com.autominder.Principal;
 import com.autominder.R;
@@ -27,13 +40,18 @@ import com.autominder.Record;
 @SuppressLint("SimpleDateFormat")
 public class newRecordActivity extends Activity implements OnDateSetListener{
 
-	Principal instancia;
+	private Principal instancia;
 
-	Spinner spinner;
-	EditText kmPassedSince;
-	EditText newRecordDate;
-	EditText newNombreTaller;
-	EditText newCost;
+    private NfcAdapter mNfcAdapter;
+    private PendingIntent mPendingIntent;
+    private IntentFilter[] mIntentFilters;
+    private String[][] mNFCTechLists;
+
+    private Spinner spinner;
+    private EditText kmPassedSince;
+    private EditText newRecordDate;
+    private EditText newNombreTaller;
+    private EditText newCost;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +80,33 @@ public class newRecordActivity extends Activity implements OnDateSetListener{
 		ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, spinnerArray);
 	    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 	    spinner.setAdapter(adapter);
+	    
+	    //NFC magic starts here
+        mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
+
+        if (mNfcAdapter != null) {//are thre nfc capabilities in the device
+        	
+        	if (mNfcAdapter.isEnabled()) {
+        		Toast.makeText(getApplicationContext(), "Acerque Tag del centro de mantenimento para obtener datos (si lo tiene)", Toast.LENGTH_LONG).show();
+            } else {
+            	Toast.makeText(getApplicationContext(), "Active NFC para acceso automatico a los datos de mantenimiento", Toast.LENGTH_LONG).show();
+            }
+        }
 		
+     // create an intent with tag data and deliver to this activity
+        mPendingIntent = PendingIntent.getActivity(this, 0,
+            new Intent(this, getClass()).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP), 0);
+ 
+        // set an intent filter for all MIME data
+        IntentFilter ndefIntent = new IntentFilter(NfcAdapter.ACTION_NDEF_DISCOVERED);
+        try {
+            ndefIntent.addDataType("*/*");
+            mIntentFilters = new IntentFilter[] { ndefIntent };
+        } catch (Exception e) {
+        	System.out.println(e.toString());
+        }
+ 
+        mNFCTechLists = new String[][] { new String[] { NfcF.class.getName() } };
 	}
 	
 	public void trySaveRecord(View view){
@@ -76,13 +120,13 @@ public class newRecordActivity extends Activity implements OnDateSetListener{
 				vCost=Integer.parseInt(newCost.getText().toString());
 			}catch (NumberFormatException e) {
 				vCost=-1;
-				Toast.makeText(getApplicationContext(), "Error procesando el campo de costo, se asume -1", Toast.LENGTH_SHORT).show();
 			}
 			
 			Record r = new Record(vCost, vNombreTaller, vKmPassedSince, vManten, vFecha);
 			instancia.getSelected().addNewRecord(r);
 			instancia.saveState();
 			setResult(RESULT_OK);
+			Toast.makeText(getApplicationContext(), "Mantenimiento registrado exitosamente", Toast.LENGTH_SHORT).show();
 			finish();
 			
 		} catch (NumberFormatException e) {
@@ -128,4 +172,62 @@ public class newRecordActivity extends Activity implements OnDateSetListener{
 		dialog.show();
 
 	}
+	
+	@Override
+	public void onNewIntent(Intent intent) {        
+		String action = intent.getAction();
+		Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
+
+		// parse through all NDEF messages and their records and pick text type only
+		Parcelable[] data = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
+		
+		if (data != null) {
+			try {
+				NdefRecord [] recs = ((NdefMessage)data[0]).getRecords();
+				if (recs[0].getTnf() == NdefRecord.TNF_WELL_KNOWN &&
+						Arrays.equals(recs[0].getType(), NdefRecord.RTD_TEXT)) {
+
+					byte[] payload = recs[0].getPayload();
+					String textEncoding = ((payload[0] & 0200) == 0) ? "UTF-8" : "UTF-16";
+					int langCodeLen = payload[0] & 0077;
+
+					String msgFromNfc = new String(payload, langCodeLen + 1,
+							payload.length - langCodeLen - 1, textEncoding);
+					
+					String[] dingen = msgFromNfc.split(";");
+					
+					 newNombreTaller.setText(dingen[0]);
+					 newNombreTaller.setEnabled(false);
+					 spinner.setSelection(((ArrayAdapter)spinner.getAdapter()).getPosition(dingen[1]));
+					 spinner.setEnabled(false);
+					 newCost.setText(dingen[2]);
+					 newCost.setEnabled(false);
+					 
+					 kmPassedSince.setText("0");
+					 
+					 trySaveRecord(null);
+					
+				}		
+			} catch (Exception e) {
+				Log.e("TagDispatch", e.toString());
+			}
+
+		}
+	}
+
+	@Override
+    public void onResume() {
+        super.onResume();
+ 
+        if (mNfcAdapter != null)
+            mNfcAdapter.enableForegroundDispatch(this, mPendingIntent, mIntentFilters, mNFCTechLists);
+    }
+ 
+    @Override
+    public void onPause() {
+        super.onPause();
+ 
+        if (mNfcAdapter != null)
+            mNfcAdapter.disableForegroundDispatch(this);
+    }
 }

@@ -28,6 +28,8 @@
     <string name="add_maintenance">Agregar Recordatorio</string>
     <string name="km_last_time">Hace cuánto se realizó</string>
     <string name="pending_maint">Mantenimientos Pendientes</string>
+    <string name="login_option">Login</string>
+    <string name="disable_gps_tracking">Descativar Modo Vehículo</string>
     
     <string-array name="time_choices">
         <item>días</item>

@@ -113,7 +113,7 @@ public class LoginActivity extends Activity{
 	
 	public void goOffline(View view){
 		System.out.println("Opcion avanzar offline");
-		instancia.setUsername(null);
+		instancia.setUsername("offline");
 		instancia.setPassword(null);
 		finish();
 	}

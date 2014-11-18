@@ -7,11 +7,20 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/add_vehicle"/>
-    
     <item
         android:id="@+id/pending_reminders"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:title="@string/pending_maint"/>
+    <item
+        android:id="@+id/login_option"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/login_option"/>
+    <item
+        android:id="@+id/disable_tracking"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:title="@string/disable_gps_tracking"/>
 
 </menu>

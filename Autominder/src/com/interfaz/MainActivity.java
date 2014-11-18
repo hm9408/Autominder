@@ -6,6 +6,8 @@ import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -34,6 +36,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.autominder.ConexionCliente;
+import com.autominder.LocationService;
 import com.autominder.NotificationService;
 import com.autominder.Principal;
 import com.autominder.R;
@@ -254,19 +257,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		PendingIntent pendingIntent = PendingIntent.getService(this, 0, myIntent, 0);
 
 		ArrayList<Reminder> allReminders = instancia.obtenerReminders();
-		//		/**
-		//		 * se crea un arreglo de fechas y solo se genera una alarma si la fecha del 
-		//		 * recordatorio respectivo no esta ya en el arreglo, finalmente se agrega la
-		//		 * fecha. Esto con el fin de evitar mas de una alarma/notificacion en el mismo dia.
-		//		 */
-		//		ArrayList<Date> reminderDates = new ArrayList<Date>();
-		//		for (int i = 0; i < allReminders.size(); i++) {
-		//			Reminder r = allReminders.get(i);
-		//			if(!reminderDates.contains(r.getFecha())){
-		//				alarmManager.set(AlarmManager.RTC_WAKEUP, r.getFecha().getTime(), pendingIntent);
-		//				reminderDates.add(r.getFecha());
-		//			}
-		//		}
+
 		/**
 		 * Se busca el reminder mas atrasado y se crea una unica alarma
 		 */
@@ -282,6 +273,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			alarmManager.setExact(AlarmManager.RTC_WAKEUP, earliest.getFecha().getTime(), pendingIntent);
 		}
 
+	}
+	
+	public void crearLocationService(){
+		Intent myINtent = new Intent (this, LocationService.class);
+		
+		startService(myINtent) ;
 	}
 
 	public void pushCambios(){
@@ -374,11 +371,33 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		adapter.notifyDataSetChanged();
 	}
 
+	private boolean isServiceRunning(Class<?> serviceClass){
+		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+		for(RunningServiceInfo service: manager.getRunningServices(Integer.MAX_VALUE)){
+			if(serviceClass.getName().equals(service.service.getClassName())){
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu){
+		if(!instancia.getUsername().equalsIgnoreCase("offline")){
+			menu.findItem(R.id.login_option).setVisible(false);
+		}
+		
+		if(!isServiceRunning(LocationService.class)){
+			menu.findItem(R.id.disable_tracking).setVisible(false);
+		}
 		return true;
 	}
 
@@ -399,12 +418,23 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		switch(id){
 		case(R.id.add_vehicle):
 			Intent i = new Intent(this, AddVehicleActivity.class);
-		startActivityForResult(i, 666);
-		return true;
+			startActivityForResult(i, 666);
+			return true;
 		case(R.id.pending_reminders):
-			Intent in = new Intent(this, PendingRemindersActivity.class);
-		startActivityForResult(in, 999);
-		return true;
+			Intent i2 = new Intent(this, PendingRemindersActivity.class);
+			startActivityForResult(i2, 999);
+			return true;
+		case(R.id.login_option):
+			Intent i3 = new Intent(this, LoginActivity.class);
+			startActivityForResult(i3, 222);
+			return true;
+		case(R.id.disable_tracking):
+			Intent i4 = new Intent(this, LocationService.class);
+			if(stopService(i4))
+				Toast.makeText(getApplicationContext(), "Modo vehiculo desactivado", Toast.LENGTH_SHORT).show();
+			else
+				Toast.makeText(getApplicationContext(), "NO desactivado", Toast.LENGTH_SHORT).show();
+			return true;
 		case android.R.id.home:
 			if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
 				mDrawerLayout.closeDrawer(mDrawerList);
@@ -520,8 +550,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		        switch (which){
 		        case DialogInterface.BUTTON_POSITIVE:
 		            //Yes button clicked
-		        	Toast.makeText(getApplicationContext(), "Agite el dispositivo de nuevo para desactivarlo", Toast.LENGTH_LONG).show();
 		            mySensorManager.unregisterListener(mySensorEventListener);
+		            crearLocationService();
 		        	break;
 
 		        case DialogInterface.BUTTON_NEGATIVE:
@@ -533,7 +563,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		builder.setMessage("Desea activar el modo Vehículo?").setPositiveButton("Yes", dialogClickListener)
-		    .setNegativeButton("No", dialogClickListener).show();
+			.setNegativeButton("No", dialogClickListener).show();
 	}
 
 }

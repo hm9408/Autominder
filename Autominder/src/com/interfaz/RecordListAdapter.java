@@ -62,7 +62,8 @@ public class RecordListAdapter extends BaseAdapter {
         nTaller.setText(records.get(position).getNombreTaller());
         
         TextView cost = (TextView) convertView.findViewById(R.id.cost_record);
-        cost.setText("$"+records.get(position).getCost());
+        String costo = Double.compare(records.get(position).getCost(), -1.0) == 0? "Costo no disponible": "$"+records.get(position).getCost(); 
+        cost.setText(costo);
          
         return convertView;
     }
