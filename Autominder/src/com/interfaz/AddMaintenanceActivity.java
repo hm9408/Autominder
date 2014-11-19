@@ -221,6 +221,7 @@ public class AddMaintenanceActivity extends Activity implements OnItemSelectedLi
 						finish();
 					}catch(NumberFormatException e){
 						showDialog("Datos inválidos", "El número de km ingresados no es válido");
+						e.printStackTrace();
 					}
 				}
 			}else{

@@ -1,6 +1,7 @@
 package com.interfaz;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -14,19 +15,17 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.ViewPager;
@@ -39,8 +38,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.autominder.ConexionCliente;
-import com.autominder.LocationService;
-import com.autominder.LocationService.LocationServiceBinder;
+import com.autominder.LocationBroadcastReceiver;
 import com.autominder.NotificationService;
 import com.autominder.Principal;
 import com.autominder.R;
@@ -48,6 +46,8 @@ import com.autominder.Reminder;
 
 public class MainActivity extends Activity implements ActionBar.TabListener{
 
+
+	public final static long frecuenciaModoCarro = 6000;
 
 	private Principal instancia; 
 	private DrawerLayout mDrawerLayout;
@@ -65,9 +65,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	private NavDrawerListAdapter adapter;
 	private SensorManager mySensorManager;
 	AlarmManager alarmManager;
-	
+
 	boolean modoCarro = false;
-	private LocationService locService;
+	private LocationBroadcastReceiver lbr;
+	private static double kmCount=0;
+
+	private boolean mostrado = false;
+
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -118,7 +122,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	private boolean firstUpdate = true;
 
 	/*What acceleration difference would we assume as a rapid movement? */
-	private final float shakeThreshold = 2.9f;
+	private final float shakeThreshold = 3.3f;
 
 	/* Has a shaking motion been started (one direction) */
 	private boolean shakeInitiated = false;
@@ -241,7 +245,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		//}
 
 		forzarRefresh(1);
-		
+
 		mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE); // (1)
 		mySensorManager.registerListener(mySensorEventListener, mySensorManager
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
@@ -281,35 +285,77 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		}
 
 	}
-	
-	public void crearLocationService(){
-		System.out.println("HOLA PUTAS");
-		Intent intent = new Intent (this, LocationService.class);
-		startService(intent);
-		getApplicationContext().bindService(intent,mConnection, Context.BIND_AUTO_CREATE) ;
-		invalidateOptionsMenu();
+
+	public static void actualizarKmCount(double km){
+		kmCount = km;
 	}
-	
-	public void desactivarLocationService(){
-		int distanciaRec = (int)locService.getContKms();
-		
+
+	public void tryIniciarModoCarro(){
+		System.out.println("INTENTANDO INICIAR MODO CARRO DESDE MAIN_ACTIVITY");
+
+		LocationManager mLocationManager = (LocationManager) this.getSystemService(LOCATION_SERVICE);
+		String provider = null;
+		if (mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+			provider = LocationManager.GPS_PROVIDER;
+		} else if (mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)) {
+			provider = LocationManager.NETWORK_PROVIDER;
+		} else { 		
+			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					switch (which){
+					case DialogInterface.BUTTON_POSITIVE:
+						//Yes button clicked
+						startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS), null);
+						break;
+					case DialogInterface.BUTTON_NEGATIVE:
+						//No button clicked
+						break;
+					}
+				}
+			};
+
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage("Modo Vehiculo requiere servicios de localizacion\nDesea activarlos?").setPositiveButton("Si", dialogClickListener)
+			.setNegativeButton("No", dialogClickListener).show();
+		}
+
+		if (provider!=null){
+			mySensorManager.unregisterListener(mySensorEventListener);
+			//			Intent intent = new Intent (this, LocationBroadcastReceiver.class);
+			//			intent.putExtra("provider", provider);
+			//			PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
+			//			am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+			//			am.set(AlarmManager.RTC_WAKEUP, (new Date()).getTime(), pIntent);
+			lbr = new LocationBroadcastReceiver(provider);
+			lbr.stahrt(getApplicationContext());
+			kmCount=0;
+			modoCarro=true;
+			invalidateOptionsMenu();
+		}
+
+
+
+	}
+
+	public void desactivarModoCarro(){
+		lbr.stahp();
+		lbr = null;
+
 		//if (km>0){  //lo dejo comentado para pruebas
-			instancia.getSelected().modifyCurrentKmCount(instancia.getSelected().getCurrentKmCount()+distanciaRec);
-			forzarRefresh(1);
-			
-			//volver a escuchar shakes
-			
-			Toast.makeText(getApplicationContext(), "Se aumentó el odometro en "+distanciaRec+" km", Toast.LENGTH_LONG).show();
+		instancia.getSelected().modifyCurrentKmCount(instancia.getSelected().getCurrentKmCount()+(int)kmCount);
+		forzarRefresh(1);
+
+		Toast.makeText(getApplicationContext(), "Se aumentó el odometro en "+(int)kmCount+" km \n Había "+kmCount+" de recorrido", Toast.LENGTH_LONG).show();
 		//}
-		
-		getApplicationContext().unbindService(mConnection);
-		
-		locService = null;
-        modoCarro = false;
-		
+
+
+		modoCarro = false;
+		kmCount=0;
+
 		System.out.println("modoCarro: "+modoCarro);
 		invalidateOptionsMenu();
-		
+
 	}
 
 	public void pushCambios(){
@@ -402,16 +448,16 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		adapter.notifyDataSetChanged();
 	}
 
-//	private boolean isServiceRunning(Class<?> serviceClass){
-//		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//		for(RunningServiceInfo service: manager.getRunningServices(Integer.MAX_VALUE)){
-//			if(serviceClass.getName().equals(service.service.getClassName())){
-//				return true;
-//			}
-//		}
-//		return false;
-//	}
-	
+	//	private boolean isServiceRunning(Class<?> serviceClass){
+	//		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+	//		for(RunningServiceInfo service: manager.getRunningServices(Integer.MAX_VALUE)){
+	//			if(serviceClass.getName().equals(service.service.getClassName())){
+	//				return true;
+	//			}
+	//		}
+	//		return false;
+	//	}
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -419,22 +465,22 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){
-		
+
 		if(!instancia.getUsername().equalsIgnoreCase("offline")){
 			menu.findItem(R.id.login_option).setVisible(false);
 		}else{
 			menu.findItem(R.id.login_option).setVisible(true);
 		}
-		
+
 		if(!modoCarro){
 			menu.findItem(R.id.disable_tracking).setVisible(false);
 		}else{
 			menu.findItem(R.id.disable_tracking).setVisible(true);
 		}
-		
+
 		return true;
 	}
 
@@ -455,19 +501,43 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		switch(id){
 		case(R.id.add_vehicle):
 			Intent i = new Intent(this, AddVehicleActivity.class);
-			startActivityForResult(i, 666);
-			return true;
+		startActivityForResult(i, 666);
+		return true;
 		case(R.id.pending_reminders):
 			Intent i2 = new Intent(this, PendingRemindersActivity.class);
-			startActivityForResult(i2, 999);
-			return true;
+		startActivityForResult(i2, 999);
+		return true;
 		case(R.id.login_option):
 			Intent i3 = new Intent(this, LoginActivity.class);
-			startActivityForResult(i3, 222);
-			return true;
+		startActivityForResult(i3, 222);
+		return true;
 		case(R.id.disable_tracking):
-			desactivarLocationService();
-			return true;
+			DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which){
+				case DialogInterface.BUTTON_POSITIVE:
+					//Yes button clicked
+					desactivarModoCarro();
+					//volver a escuchar shakes
+					mySensorManager.registerListener(mySensorEventListener, mySensorManager
+							.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+							SensorManager.SENSOR_DELAY_NORMAL); // (2)
+
+					break;
+
+				case DialogInterface.BUTTON_NEGATIVE:
+					//No button clicked
+					break;
+				}
+			}
+		};
+
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setMessage("Desea desactivar el modo Vehículo?").setPositiveButton("Si", dialogClickListener)
+		.setNegativeButton("No", dialogClickListener).show();
+
+		return true;
 		case android.R.id.home:
 			if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
 				mDrawerLayout.closeDrawer(mDrawerList);
@@ -546,11 +616,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	}
 
 	//SHAKE METHODS
-	
+
 	/* Store the acceleration values given by the sensor */
 	private void updateAccelParameters(float xNewAccel, float yNewAccel,
 			float zNewAccel) {
-                /* we have to suppress the first change of acceleration, it results from first values being initialized with 0 */
+		/* we have to suppress the first change of acceleration, it results from first values being initialized with 0 */
 		if (firstUpdate) {  
 			xPreviousAccel = xNewAccel;
 			yPreviousAccel = yNewAccel;
@@ -565,57 +635,43 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		yAccel = yNewAccel;
 		zAccel = zNewAccel;
 	}
-	
+
 	/* If the values of acceleration have changed on at least two axises, we are probably in a shake motion */
 	private boolean isAccelerationChanged() {
 		float deltaX = Math.abs(xPreviousAccel - xAccel);
 		float deltaY = Math.abs(yPreviousAccel - yAccel);
 		float deltaZ = Math.abs(zPreviousAccel - zAccel);
-		return (deltaX > shakeThreshold && deltaY > shakeThreshold)
-				|| (deltaX > shakeThreshold && deltaZ > shakeThreshold)
-				|| (deltaY > shakeThreshold && deltaZ > shakeThreshold);
+		//		return (deltaX > shakeThreshold && deltaY > shakeThreshold)
+		//				|| (deltaX > shakeThreshold && deltaZ > shakeThreshold)
+		//				|| (deltaY > shakeThreshold && deltaZ > shakeThreshold);
+		return (deltaY > shakeThreshold || deltaZ > shakeThreshold || deltaX > shakeThreshold);
 	}
-	
+
 	private void executeShakeAction() {
 		DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-		    @Override
-		    public void onClick(DialogInterface dialog, int which) {
-		        switch (which){
-		        case DialogInterface.BUTTON_POSITIVE:
-		            //Yes button clicked
-		            mySensorManager.unregisterListener(mySensorEventListener);
-		            crearLocationService();
-		        	break;
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				switch (which){
+				case DialogInterface.BUTTON_POSITIVE:
+					//Yes button clicked
+					tryIniciarModoCarro();
+					mostrado = false;
+					break;
 
-		        case DialogInterface.BUTTON_NEGATIVE:
-		            //No button clicked
-		            break;
-		        }
-		    }
+				case DialogInterface.BUTTON_NEGATIVE:
+					//No button clicked
+					mostrado = false;
+					break;
+				}
+			}
 		};
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-		builder.setMessage("Desea activar el modo Vehículo?").setPositiveButton("Yes", dialogClickListener)
+		if(!mostrado){
+			builder.setMessage("Desea activar el modo Vehículo?").setPositiveButton("Si", dialogClickListener)
 			.setNegativeButton("No", dialogClickListener).show();
+			mostrado =true;
+		}
 	}
-	
-	/** Defines callbacks for LocationService binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-        	LocationServiceBinder binder = (LocationServiceBinder) service;
-            locService = binder.getLocationService();
-            modoCarro = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-        	locService = null;
-            modoCarro = false;
-        }
-    };
 
 }

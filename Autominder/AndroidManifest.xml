@@ -60,7 +60,7 @@
         </activity>
         <activity android:name="com.interfaz.LoginActivity" >
         </activity>
-        <service android:name="LocationService"></service>
+        <receiver android:name="LocationBroadcastReceiver"></receiver>
     </application>
 
 </manifest>

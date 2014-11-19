@@ -20,7 +20,8 @@
     <item
         android:id="@+id/disable_tracking"
         android:orderInCategory="100"
-        android:showAsAction="never"
+        android:icon="@drawable/car"
+        android:showAsAction="ifRoom"
         android:title="@string/disable_gps_tracking"/>
 
 </menu>
