@@ -4,7 +4,6 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
@@ -12,32 +11,30 @@ import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.widget.Toast;
 
 public class LocationService extends Service implements LocationListener{
 
+	private final IBinder mBinder = new LocationServiceBinder();
 
-	@SuppressWarnings("unused")
 	private Principal instancia;
 	private double contKms=0;
 	protected LocationManager mLocationManager;
 	private Location current;	
 
 	@Override
-	public IBinder onBind(Intent intent) {
-
-		return null;
-	}
-
-	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) 
 	{
+		System.out.println("HOLA PUTAS DESDE EL SERVICE");
+		Toast.makeText(getApplicationContext(), "STARTING LOCATION SERVICE", Toast.LENGTH_SHORT).show();
+		
 		instancia = Principal.darInstancia(getApplicationContext());
 		ScheduledThreadPoolExecutor stps = new ScheduledThreadPoolExecutor(1);
 		Runnable updateTask = new Runnable() {
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
+
 				mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 			    mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0L,
@@ -49,16 +46,14 @@ public class LocationService extends Service implements LocationListener{
 
 	}
 
-	public void onStart(Context context,Intent intent, int startId)
-	{
-
-	}
-
-
-	public class MyLocalBinder extends Binder {
-		LocationService getService() {
+	public class LocationServiceBinder extends Binder {
+		
+		public LocationServiceBinder(){}
+		
+		public LocationService getLocationService() {
 			return LocationService.this;
 		}
+		
 	}
 
 
@@ -107,4 +102,8 @@ public class LocationService extends Service implements LocationListener{
 		
 	}
 
+	@Override
+	public IBinder onBind(Intent intent) {
+		return mBinder;
+	}
 }

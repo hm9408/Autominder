@@ -14,9 +14,11 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -24,6 +26,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.view.ViewPager;
@@ -37,6 +40,7 @@ import android.widget.Toast;
 
 import com.autominder.ConexionCliente;
 import com.autominder.LocationService;
+import com.autominder.LocationService.LocationServiceBinder;
 import com.autominder.NotificationService;
 import com.autominder.Principal;
 import com.autominder.R;
@@ -61,6 +65,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	private NavDrawerListAdapter adapter;
 	private SensorManager mySensorManager;
 	AlarmManager alarmManager;
+	
+	boolean modoCarro = false;
+	private LocationService locService;
 
 	/**
 	 * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -276,9 +283,33 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	}
 	
 	public void crearLocationService(){
-		Intent myINtent = new Intent (this, LocationService.class);
+		System.out.println("HOLA PUTAS");
+		Intent intent = new Intent (this, LocationService.class);
+		startService(intent);
+		getApplicationContext().bindService(intent,mConnection, Context.BIND_AUTO_CREATE) ;
+		invalidateOptionsMenu();
+	}
+	
+	public void desactivarLocationService(){
+		int distanciaRec = (int)locService.getContKms();
 		
-		startService(myINtent) ;
+		//if (km>0){  //lo dejo comentado para pruebas
+			instancia.getSelected().modifyCurrentKmCount(instancia.getSelected().getCurrentKmCount()+distanciaRec);
+			forzarRefresh(1);
+			
+			//volver a escuchar shakes
+			
+			Toast.makeText(getApplicationContext(), "Se aumentó el odometro en "+distanciaRec+" km", Toast.LENGTH_LONG).show();
+		//}
+		
+		getApplicationContext().unbindService(mConnection);
+		
+		locService = null;
+        modoCarro = false;
+		
+		System.out.println("modoCarro: "+modoCarro);
+		invalidateOptionsMenu();
+		
 	}
 
 	public void pushCambios(){
@@ -371,15 +402,15 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		adapter.notifyDataSetChanged();
 	}
 
-	private boolean isServiceRunning(Class<?> serviceClass){
-		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-		for(RunningServiceInfo service: manager.getRunningServices(Integer.MAX_VALUE)){
-			if(serviceClass.getName().equals(service.service.getClassName())){
-				return true;
-			}
-		}
-		return false;
-	}
+//	private boolean isServiceRunning(Class<?> serviceClass){
+//		ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//		for(RunningServiceInfo service: manager.getRunningServices(Integer.MAX_VALUE)){
+//			if(serviceClass.getName().equals(service.service.getClassName())){
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -391,20 +422,26 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu){
+		
 		if(!instancia.getUsername().equalsIgnoreCase("offline")){
 			menu.findItem(R.id.login_option).setVisible(false);
+		}else{
+			menu.findItem(R.id.login_option).setVisible(true);
 		}
 		
-		if(!isServiceRunning(LocationService.class)){
+		if(!modoCarro){
 			menu.findItem(R.id.disable_tracking).setVisible(false);
+		}else{
+			menu.findItem(R.id.disable_tracking).setVisible(true);
 		}
+		
 		return true;
 	}
 
 	@Override
 	public void onConfigurationChanged(Configuration newConfig) {
 		super.onConfigurationChanged(newConfig);
-		// Pass any configuration change to the drawer toggls
+		// Pass any configuration change to the drawer toggles
 		mDrawerToggle.onConfigurationChanged(newConfig);
 	}
 
@@ -429,11 +466,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			startActivityForResult(i3, 222);
 			return true;
 		case(R.id.disable_tracking):
-			Intent i4 = new Intent(this, LocationService.class);
-			if(stopService(i4))
-				Toast.makeText(getApplicationContext(), "Modo vehiculo desactivado", Toast.LENGTH_SHORT).show();
-			else
-				Toast.makeText(getApplicationContext(), "NO desactivado", Toast.LENGTH_SHORT).show();
+			desactivarLocationService();
 			return true;
 		case android.R.id.home:
 			if(mDrawerLayout.isDrawerOpen(mDrawerList)) {
@@ -565,5 +598,24 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		builder.setMessage("Desea activar el modo Vehículo?").setPositiveButton("Yes", dialogClickListener)
 			.setNegativeButton("No", dialogClickListener).show();
 	}
+	
+	/** Defines callbacks for LocationService binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+        	LocationServiceBinder binder = (LocationServiceBinder) service;
+            locService = binder.getLocationService();
+            modoCarro = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+        	locService = null;
+            modoCarro = false;
+        }
+    };
 
 }

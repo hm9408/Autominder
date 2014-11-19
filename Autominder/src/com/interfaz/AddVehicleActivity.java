@@ -3,6 +3,7 @@ package com.interfaz;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.autominder.ConexionCliente;
 import com.autominder.Maintenance;
 import com.autominder.Principal;
 import com.autominder.R;
@@ -66,29 +67,41 @@ public class AddVehicleActivity extends Activity implements OnEditorActionListen
 		currentKmCount = (EditText)findViewById(R.id.km_actual_vehiculo);
 		
 		webView = (WebView)findViewById(R.id.webView1);
-		webView.getSettings().setJavaScriptEnabled(true);
-		webView.addJavascriptInterface(new JSInterface(this), "Android");
-		webView.loadUrl("file:///android_asset/mapBogota.html");
-		webView.setOnTouchListener(new View.OnTouchListener() {
-
-		    @Override
-		    public boolean onTouch(View v, MotionEvent event) {                     
-
-		        if(event.getAction()==MotionEvent.ACTION_UP){
-		            webView.getParent().requestDisallowInterceptTouchEvent(false);
-
-		        }else                                   
-		            webView.getParent().requestDisallowInterceptTouchEvent(true);
-
-		        return false;
-		    }
-
-		});
 		veces = (EditText)findViewById(R.id.veces_por_semana);
-		veces.setText(""+1);
-		veces.setOnEditorActionListener(this);
-		
 		weeklyKM =(EditText)findViewById(R.id.km_semanales_vehiculo);
+		
+		if(new ConexionCliente(this).isOnline()){
+			webView.getSettings().setJavaScriptEnabled(true);
+			webView.addJavascriptInterface(new JSInterface(this), "Android");
+			webView.loadUrl("file:///android_asset/mapBogota.html");
+			webView.setOnTouchListener(new View.OnTouchListener() {
+
+			    @Override
+			    public boolean onTouch(View v, MotionEvent event) {                     
+
+			        if(event.getAction()==MotionEvent.ACTION_UP){
+			            webView.getParent().requestDisallowInterceptTouchEvent(false);
+
+			        }else                                   
+			            webView.getParent().requestDisallowInterceptTouchEvent(true);
+
+			        return false;
+			    }
+
+			});
+			veces.setText(""+1);
+			veces.setOnEditorActionListener(this);
+		}else{
+			webView.setVisibility(View.GONE);
+			findViewById(R.id.veces_layout).setVisibility(View.GONE);
+			findViewById(R.id.separator1).setVisibility(View.GONE);
+			findViewById(R.id.textView7).setVisibility(View.GONE);
+			((TextView)findViewById(R.id.textView6)).setText("Recorrido");
+			weeklyKM.setHint("km semanales");
+			weeklyKM.setEms(10);
+		}
+				
+		
 		
 		cb1 = (CheckBox)findViewById(R.id.checkBox1);
 		cb2 = (CheckBox)findViewById(R.id.checkBox2);

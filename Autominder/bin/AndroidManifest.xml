@@ -60,6 +60,7 @@
         </activity>
         <activity android:name="com.interfaz.LoginActivity" >
         </activity>
+        <service android:name="LocationService"></service>
     </application>
 
 </manifest>

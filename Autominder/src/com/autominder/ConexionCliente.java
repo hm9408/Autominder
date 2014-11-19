@@ -261,7 +261,6 @@ public class ConexionCliente {
 		
 	}
 	
-	@SuppressWarnings("static-access")
 	public boolean isOnline() {
 	    ConnectivityManager cm =(ConnectivityManager) context.getSystemService(context.CONNECTIVITY_SERVICE);
 	    NetworkInfo netInfo = cm.getActiveNetworkInfo();
