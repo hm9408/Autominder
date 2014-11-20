@@ -10,14 +10,14 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 
-public class LocationBroadcastReceiver implements LocationListener{
+public class LocationTracker implements LocationListener{
 
 	private double contKms;
 	private static LocationManager mLocationManager;
 	private Location current=null;	
 	private String provider;
 	
-	public LocationBroadcastReceiver(String provider){
+	public LocationTracker(String provider){
 		contKms=0;
 		this.provider = provider;
 	}

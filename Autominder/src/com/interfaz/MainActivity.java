@@ -39,7 +39,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.autominder.ConexionCliente;
-import com.autominder.LocationBroadcastReceiver;
+import com.autominder.LocationTracker;
 import com.autominder.NotificationService;
 import com.autominder.Principal;
 import com.autominder.R;
@@ -68,7 +68,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	AlarmManager alarmManager;
 
 	boolean modoCarro = false;
-	private LocationBroadcastReceiver lbr;
+	private LocationTracker lbr;
 	private static double kmCount=0;
 
 	private boolean mostrado = false;
@@ -332,7 +332,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 			//			PendingIntent pIntent = PendingIntent.getBroadcast(this, 0, intent, 0);
 			//			am = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
 			//			am.set(AlarmManager.RTC_WAKEUP, (new Date()).getTime(), pIntent);
-			lbr = new LocationBroadcastReceiver(provider);
+			lbr = new LocationTracker(provider);
 			lbr.stahrt(getApplicationContext());
 			kmCount=0;
 			modoCarro=true;
