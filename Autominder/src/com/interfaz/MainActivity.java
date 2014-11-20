@@ -349,6 +349,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 
 		//if (km>0){  //lo dejo comentado para pruebas
 		instancia.getSelected().modifyCurrentKmCount(instancia.getSelected().getCurrentKmCount()+(int)kmCount);
+		instancia.saveState();
 		forzarRefresh(1);
 
 		Toast.makeText(getApplicationContext(), "Se aumentó el odometro en "+(int)kmCount+" km \n Había "+kmCount+" de recorrido", Toast.LENGTH_LONG).show();
