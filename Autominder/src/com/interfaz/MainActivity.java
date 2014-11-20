@@ -17,6 +17,7 @@ import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -205,12 +206,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 				instancia.getVehiculos());
 		mDrawerList.setAdapter(adapter);
 
-		// enabling action bar app icon and behaving it as toggle button
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
+
 
 		mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-				R.drawable.ic_launcher, //nav menu toggle icon
+				R.drawable.ic_drawer, //nav menu toggle icon
 				R.string.app_name, // nav drawer open - description for accessibility
 				R.string.app_name // nav drawer close - description for accessibility
 				){
@@ -239,6 +238,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		{
 			getActionBar().setTitle(instancia.getSelected().getName());
 		}
+
+		// enabling action bar app icon and behaving it as toggle button
+	    getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setHomeButtonEnabled(true);
+
 		//if (savedInstanceState == null) {
 		// on first time display view for first nav item
 		//displayView(0);
@@ -288,6 +292,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 
 	public static void actualizarKmCount(double km){
 		kmCount = km;
+		System.out.println("kmCount: "+kmCount);
 	}
 
 	public void tryIniciarModoCarro(){
@@ -664,9 +669,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 					break;
 				}
 			}
+
 		};
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setCancelable(false);
 		if(!mostrado){
 			builder.setMessage("Desea activar el modo Vehículo?").setPositiveButton("Si", dialogClickListener)
 			.setNegativeButton("No", dialogClickListener).show();
