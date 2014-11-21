@@ -7,14 +7,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.webkit.WebView;
 import android.widget.EditText;
 import android.widget.NumberPicker;
-import android.widget.TextView;
-import android.widget.TextView.OnEditorActionListener;
 
 public class EditVehicleActivity extends Activity {
 

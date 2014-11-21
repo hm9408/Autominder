@@ -1,14 +1,11 @@
 package com.interfaz;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlarmManager;
 import android.app.AlertDialog;
 import android.app.Fragment;
@@ -17,7 +14,6 @@ import android.app.FragmentTransaction;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.hardware.Sensor;
@@ -29,6 +25,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v13.app.FragmentPagerAdapter;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.view.Menu;
@@ -248,13 +245,12 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 		//displayView(0);
 		//}
 
-		forzarRefresh(1);
-
 		mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE); // (1)
 		mySensorManager.registerListener(mySensorEventListener, mySensorManager
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
 				SensorManager.SENSOR_DELAY_NORMAL); // (2)
 
+		forzarRefresh(1);
 	}
 
 	/**
@@ -380,14 +376,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 						return null;
 					}
 				}.execute();
-
-				hacertodo();
-
-				adapter.notifyDataSetChanged();
 				instancia.setSelected(instancia.getVehiculos().get(instancia.getVehiculos().size()-1));
+
+				try{
+					forzarRefresh(1);
+				}catch(NullPointerException e){//no ha inicializado => es la primera vez que llega al main
+					System.out.println("PRIMERA VEZ QUE HACE MAIN");
+					hacertodo();
+				}
+				
+				adapter.notifyDataSetChanged();
 				getActionBar().setTitle(instancia.getSelected().getName());
 				crearNotificationService();
-				forzarRefresh(1);
 
 			}
 		}else if(requestCode == 999){//vuelve de PendingRemindersActivity
@@ -581,6 +581,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener{
 	 * one of the sections/tabs/pages.
 	 */
 	public class SectionsPagerAdapter extends FragmentPagerAdapter {
+
 
 		List<Fragment> fragments;
 

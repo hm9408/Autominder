@@ -28,8 +28,7 @@ public class ReminderListAdapter extends BaseAdapter {
 	private ArrayList<Reminder> reminders;
 	private MainActivity mainActivity;
 	private FragmentoReminders fr;
-	private PendingRemindersActivity pra;
-
+	
 	public ReminderListAdapter(Context context, ArrayList<Reminder> reminders, MainActivity ma, FragmentoReminders fr){
 		this.context = context;
 		this.reminders = reminders;
@@ -160,7 +159,6 @@ public class ReminderListAdapter extends BaseAdapter {
 	}
 
 	public void SetPendingRemindersAct(PendingRemindersActivity pendingRemindersActivity) {
-		pra = pendingRemindersActivity;
 		
 	}
 }

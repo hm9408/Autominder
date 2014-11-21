@@ -29,7 +29,10 @@ public class Vehicle implements Serializable{
 		this.weeklyKM = vWeeklyKM;
 		this.currentKmCount = currentKmCount;
 		lastDayChecked = new Date();
-		this.maintenances = maintenances;
+		this.maintenances = new ArrayList<Maintenance>();
+		for (int i = 0; i < maintenances.size(); i++) {
+			this.maintenances.add(maintenances.get(i));
+		}
 		this.records = records;
 		reminders = new ArrayList<Reminder>();//los reminders los calcula el vehicle
 		calcularRecordatorios();
@@ -186,19 +189,24 @@ public class Vehicle implements Serializable{
 	 * @return retorna false si ya existe un mantenimiento con ese nombre 
 	 */
 	public boolean addNewMaintenance(Maintenance m, Record r){
-		boolean noExiste = true;
-		for (int i = 0; i < maintenances.size() && noExiste ; i++) {
-			if (maintenances.get(i).getNombre().equals(m.getNombre())) {
-				noExiste=true;
-			}
-		}
+		boolean noExiste = getMaintenance(m.getNombre())==null;
+		System.out.println("a agregar: "+m.getNombre());
+//		for (int i = 0; i < maintenances.size() && noExiste ; i++) {
+//			System.out.println("maint nom: "+maintenances.get(i).getNombre());
+//			if (maintenances.get(i).getNombre().equals(m.getNombre())) {
+//				noExiste=false;
+//			}
+//		}
+		System.out.println("No existe: "+noExiste);
 		if (noExiste) {
 			maintenances.add(m);
 			records.add(r);
 			calcularRecordatorios();
 			return true;
+		}else{
+			return false;
 		}
-		return false;
+		
 	}
 
 	/**
@@ -222,15 +230,14 @@ public class Vehicle implements Serializable{
 	}
 	
 	public Maintenance getMaintenance(String name){
-		Maintenance a = null;
 		
 		for (int i = 0; i < maintenances.size(); i++) {
 			Maintenance act = maintenances.get(i);
 			if(name.equalsIgnoreCase(act.getNombre()))
-				a = act;
+				return act;
 		}
 		
-		return a;
+		return null;
 	}
 
 	public void modifyMaintenance(String maintenName, int newKmInterval, int newTimeInterval, String timeChoice){

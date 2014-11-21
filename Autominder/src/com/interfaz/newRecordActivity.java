@@ -175,9 +175,6 @@ public class newRecordActivity extends Activity implements OnDateSetListener{
 	
 	@Override
 	public void onNewIntent(Intent intent) {        
-		String action = intent.getAction();
-		Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-
 		// parse through all NDEF messages and their records and pick text type only
 		Parcelable[] data = intent.getParcelableArrayExtra(NfcAdapter.EXTRA_NDEF_MESSAGES);
 		

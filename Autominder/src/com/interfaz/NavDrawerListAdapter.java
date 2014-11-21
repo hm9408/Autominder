@@ -18,7 +18,6 @@ import android.view.View.OnClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class NavDrawerListAdapter extends BaseAdapter {
 

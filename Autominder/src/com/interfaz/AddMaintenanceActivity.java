@@ -189,13 +189,16 @@ public class AddMaintenanceActivity extends Activity implements OnItemSelectedLi
 								-1, 
 								z);
 						Maintenance a = instancia.getMantenimientos().get(instancia.getMantenimientos().size()-1); //el recien agregado
+						System.out.println("Ultimo man general: "+a.getNombre());
+						
 						int estimatedKmPassed =instancia.getSelected().getKmPassedSince((new SimpleDateFormat("dd-MM-yyyy")).parse(editTimeLastTime.getText().toString()));
-						instancia.addMaintenanceSelected(a, 
+						boolean guardo = instancia.addMaintenanceSelected(a, 
 								new Record(-1, "Taller desconocido", 
 										estimatedKmPassed,
 										a.getNombre(), 
 										(new SimpleDateFormat("dd-MM-yyyy")).parse(editTimeLastTime.getText().toString())
 										));
+						System.out.println("Guardo:"+guardo);
 						setResult(RESULT_OK);
 						finish();
 					}catch(NumberFormatException e){
@@ -211,6 +214,8 @@ public class AddMaintenanceActivity extends Activity implements OnItemSelectedLi
 								Integer.parseInt(editKM.getText().toString()), 
 								-1);
 						Maintenance a = instancia.getMantenimientos().get(instancia.getMantenimientos().size()-1); //el recien agregado
+						System.out.println("Ultimo man general: "+a.getNombre());
+
 						instancia.addMaintenanceSelected(a, 
 								new Record(-1, "Taller desconocido", 
 										Integer.parseInt(editKmLastTime.getText().toString()), 
@@ -322,6 +327,7 @@ public class AddMaintenanceActivity extends Activity implements OnItemSelectedLi
 		
 	}
 	
+	@SuppressLint("SimpleDateFormat")
 	public void onToggleClicked(View view){
 		boolean time = ((Switch) view).isChecked();
 		if(time){
